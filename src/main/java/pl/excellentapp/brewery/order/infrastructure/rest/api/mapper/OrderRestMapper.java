@@ -27,6 +27,8 @@ public interface OrderRestMapper {
     }
 
     @Mapping(target = "orderedQuantity", source = "quantity")
+    @Mapping(target = "reservedQuantity", ignore = true)
+    @Mapping(target = "price", ignore = true)
     OrderItem map(OrderItemRequest orderItemRequest);
 
     List<OrderItem> mapToOrderItemList(List<OrderItemRequest> items);

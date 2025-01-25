@@ -25,4 +25,8 @@ public class Order {
     private OffsetDateTime orderDateTime;
     private OrderStatus orderStatus = OrderStatus.NEW;
 
+    private Long version;
+    private OffsetDateTime createdDate;
+    private OffsetDateTime lastModifiedDate;
+
 }
