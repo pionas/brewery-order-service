@@ -60,6 +60,12 @@ class OrderRestController {
         return new ResponseEntity<>(orderResponse, HttpStatus.OK);
     }
 
+    @PostMapping("/{orderId}/cancel")
+    public ResponseEntity<HttpStatus> cancelOrder(@PathVariable("orderId") UUID orderId) {
+        orderService.cancelOrder(orderId);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
     @DeleteMapping("/{orderId}")
     public ResponseEntity<HttpStatus> deleteOrder(@PathVariable("orderId") UUID orderId) {
         orderService.delete(orderId);
