@@ -26,7 +26,7 @@ class OrderRestControllerIT extends AbstractIT {
     }
 
     @Test
-    void getOrders_ShouldReturnEmptyListOfOrders() {
+    void shouldReturnEmptyListOfOrders() {
         // given
 
         // when
@@ -43,7 +43,7 @@ class OrderRestControllerIT extends AbstractIT {
 
     @Test
     @Sql({"/db/orders.sql"})
-    void getOrders_ShouldReturnListOfOrders() {
+    void shouldReturnListOfOrders() {
         // given
 
         // when
@@ -60,9 +60,9 @@ class OrderRestControllerIT extends AbstractIT {
 
     @Test
     @Sql({"/db/orders.sql"})
-    void getOrder_ShouldReturnOrder() {
+    void shouldReturnOrderById() {
         // given
-        final var orderId = UUID.fromString("1b4e28ba-2fa1-4d3b-a3f5-ef19b5a7633b");
+        final var orderId = UUID.fromString("11b4e28b-2fa1-4d3b-a3f5-ef19b5a7633b");
 
         // when
         final var response = restTemplate.getForEntity(MODEL_API_URL + "/{orderId}", OrderResponse.class, orderId);
@@ -75,7 +75,20 @@ class OrderRestControllerIT extends AbstractIT {
     }
 
     @Test
-    void deleteOrder_ShouldThrowException() {
+    @Sql({"/db/orders.sql"})
+    void shouldReturnNotFoundWhenOrderByIdNotExists() {
+        // given
+        final var orderId = UUID.fromString("be09a70b-8916-41de-9299-998decf259d5");
+
+        // when
+        final var response = restTemplate.getForEntity(MODEL_API_URL + "/{orderId}", OrderResponse.class, orderId);
+
+        // then
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenTryDeleteButOrderByIdNotExists() {
         // given
         final var orderId = UUID.fromString("1b4e28ba-2fa1-4d3b-a3f5-ef19b5a7633b");
 
@@ -94,9 +107,9 @@ class OrderRestControllerIT extends AbstractIT {
 
     @Test
     @Sql({"/db/orders.sql"})
-    void deleteOrder_ShouldDelete() {
+    void shouldDeleteOrderById() {
         // given
-        final var orderId = UUID.fromString("1b4e28ba-2fa1-4d3b-a3f5-ef19b5a7633b");
+        final var orderId = UUID.fromString("11b4e28b-2fa1-4d3b-a3f5-ef19b5a7633b");
 
         // when
         final var response = restTemplate.exchange(
@@ -110,7 +123,7 @@ class OrderRestControllerIT extends AbstractIT {
         // then
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
         final var responseVerify = restTemplate.getForEntity(MODEL_API_URL + "/{orderId}", OrderResponse.class, orderId);
-        assertEquals(HttpStatus.OK, responseVerify.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, responseVerify.getStatusCode());
     }
 
 }

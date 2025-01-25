@@ -18,8 +18,6 @@ import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderResponse;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrdersResponse;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.mapper.OrderRestMapper;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,8 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class OrderRestControllerTest extends AbstractMvcTest {
-
-    private static final OffsetDateTime OFFSET_DATE_TIME = OffsetDateTime.of(2025, 1, 23, 12, 7, 0, 0, ZoneOffset.UTC);
 
     @InjectMocks
     private OrderRestController controller;
@@ -54,7 +50,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
     }
 
     @Test
-    void getOrders_ShouldReturnEmptyListOfOrders() throws Exception {
+    void shouldReturnEmptyListOfOrders() throws Exception {
         // given
 
         // when
@@ -66,7 +62,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
     }
 
     @Test
-    void getOrders_ShouldReturnListOfOrders() throws Exception {
+    void shouldReturnListOfOrders() throws Exception {
         // given
         final var order1 = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"));
         final var order2 = createOrder(UUID.fromString("4a5b96de-684a-411b-9616-fddd0b06a382"));
@@ -98,7 +94,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
     }
 
     @Test
-    void getOrder_ShouldReturnNotFound() throws Exception {
+    void shouldReturnNotFoundWhenOrderByIdNotExists() throws Exception {
         // given
         final var orderId = UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936");
         // when
@@ -115,7 +111,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
     }
 
     @Test
-    void getOrder_ShouldReturn() throws Exception {
+    void shouldReturnOrderById() throws Exception {
         // given
         final var orderId = UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936");
         final var order = createOrder(orderId);
@@ -137,7 +133,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
     }
 
     @Test
-    void createOrder_ShouldReturnCreatedOrder() throws Exception {
+    void shouldCreateOrder() throws Exception {
         // given
         final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"));
         final var customerId = UUID.fromString("ec85f68b-eb10-4b1a-b1ee-091719ebc4b4");
@@ -164,20 +160,19 @@ class OrderRestControllerTest extends AbstractMvcTest {
         final var orderResponse = super.mapFromJson(responseBody, OrderResponse.class);
         assertNotNull(orderResponse);
         assertEquals(orderResponse.getId(), order.getId());
-        when(orderService.create(any(), any())).thenReturn(order);
     }
 
     @Test
-    void updateOrder_ShouldReturnUpdatedOrder() throws Exception {
+    void shouldUpdateOrder() throws Exception {
         // given
-        final var offsetDateTime = OffsetDateTime.of(2025, 1, 23, 12, 7, 10, 0, ZoneOffset.UTC);
+        final var customerId = UUID.fromString("ec85f68b-eb10-4b1a-b1ee-091719ebc4b4");
         final var originalOrder = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"));
-        final var updateRequest = getUpdateRequest(originalOrder);
-        final var expectedOrder = getExpectedOrder(originalOrder, offsetDateTime);
+        final var orderItem = new OrderItemRequest(UUID.randomUUID(), 1);
         final var orderRequest = OrderRequest.builder()
-
+                .customerId(customerId)
+                .items(List.of(orderItem))
                 .build();
-        when(orderService.update(any(), any())).thenReturn(expectedOrder);
+        when(orderService.update(any(), any())).thenReturn(originalOrder);
 
         // when
         final var response = mockMvc.perform(put("/api/v1/orders/" + originalOrder.getId())
@@ -194,12 +189,35 @@ class OrderRestControllerTest extends AbstractMvcTest {
         assertNotNull(responseBody);
         final var orderResponse = super.mapFromJson(responseBody, OrderResponse.class);
         assertNotNull(orderResponse);
-        assertEquals(orderResponse.getId(), expectedOrder.getId());
+        assertEquals(orderResponse.getId(), originalOrder.getId());
         verify(orderService).update(any(), any());
     }
 
     @Test
-    void deleteOrder_ShouldDeletedOrder() throws Exception {
+    void shouldThrowNotFoundWhenTryUpdateOrderByOrderByIdNotExists() throws Exception {
+        // given
+        final var customerId = UUID.fromString("ec85f68b-eb10-4b1a-b1ee-091719ebc4b4");
+        final var originalOrder = createOrder(UUID.fromString("be09a70b-8916-41de-9299-998decf259d5"));
+        final var orderItem = new OrderItemRequest(UUID.randomUUID(), 1);
+        final var orderRequest = OrderRequest.builder()
+                .customerId(customerId)
+                .items(List.of(orderItem))
+                .build();
+        when(orderService.update(any(), any())).thenThrow(new OrderNotFoundException("Error occurred"));
+
+        // when
+        mockMvc.perform(put("/api/v1/orders/" + originalOrder.getId())
+                        .content(super.mapToJson(orderRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        // then
+        verify(orderService).update(any(), any());
+    }
+
+    @Test
+    void shouldDeleteOrder() throws Exception {
         // given
         final var orderId = UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936");
 
@@ -214,7 +232,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
     }
 
     @Test
-    void deleteOrder_ShouldThrowExceptionWhenTryDeletedOrder() throws Exception {
+    void shouldThrowExceptionWhenTryDeleteOrderButOrderByIdNotExists() throws Exception {
         // given
         final var orderId = UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936");
         doThrow(new OrderNotFoundException("Order Not Found. UUID: " + orderId)).when(orderService).delete(orderId);
@@ -233,17 +251,5 @@ class OrderRestControllerTest extends AbstractMvcTest {
         return Order.builder()
                 .id(id)
                 .build();
-    }
-
-    private Order getUpdateRequest(Order originalOrder) {
-        return createOrder(
-                originalOrder.getId()
-        );
-    }
-
-    private Order getExpectedOrder(Order originalOrder, OffsetDateTime offsetDateTime) {
-        return createOrder(
-                originalOrder.getId()
-        );
     }
 }
