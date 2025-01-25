@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -21,7 +20,4 @@ public class OrderItemRequest {
 
     @Positive(message = "Quantity must be positive")
     private Integer quantity;
-
-    @Positive(message = "Price must be positive")
-    private BigDecimal price;
 }

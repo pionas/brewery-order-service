@@ -10,14 +10,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pl.excellentapp.brewery.order.application.OrderService;
-import pl.excellentapp.brewery.order.domain.Order;
 import pl.excellentapp.brewery.order.domain.exception.OrderNotFoundException;
+import pl.excellentapp.brewery.order.domain.order.Order;
+import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderItemRequest;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderRequest;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderResponse;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrdersResponse;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.mapper.OrderRestMapper;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -140,10 +140,13 @@ class OrderRestControllerTest extends AbstractMvcTest {
     void createOrder_ShouldReturnCreatedOrder() throws Exception {
         // given
         final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"));
+        final var customerId = UUID.fromString("ec85f68b-eb10-4b1a-b1ee-091719ebc4b4");
+        final var orderItem = new OrderItemRequest(UUID.randomUUID(), 1);
         final var orderRequest = OrderRequest.builder()
-
+                .customerId(customerId)
+                .items(List.of(orderItem))
                 .build();
-        when(orderService.create(any())).thenReturn(order);
+        when(orderService.create(any(), any())).thenReturn(order);
 
         // when
         final var response = mockMvc.perform(post("/api/v1/orders")
@@ -161,7 +164,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
         final var orderResponse = super.mapFromJson(responseBody, OrderResponse.class);
         assertNotNull(orderResponse);
         assertEquals(orderResponse.getId(), order.getId());
-        verify(orderService).create(any());
+        when(orderService.create(any(), any())).thenReturn(order);
     }
 
     @Test

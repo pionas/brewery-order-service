@@ -48,7 +48,7 @@ class OrderRestController {
 
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
-        final var orderResponse = orderRestMapper.map(orderService.create(orderRestMapper.map(orderRequest)));
+        final var orderResponse = orderRestMapper.map(orderService.create(orderRequest.getCustomerId(), orderRestMapper.mapToOrderItemList(orderRequest.getItems())));
 
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
