@@ -2,12 +2,12 @@ package pl.excellentapp.brewery.order.application;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import pl.excellentapp.brewery.order.domain.Order;
-import pl.excellentapp.brewery.order.domain.OrderRepository;
 import pl.excellentapp.brewery.order.domain.exception.OrderNotFoundException;
-import pl.excellentapp.brewery.order.utils.DateTimeProvider;
+import pl.excellentapp.brewery.order.domain.order.Order;
+import pl.excellentapp.brewery.order.domain.order.OrderItem;
+import pl.excellentapp.brewery.order.domain.order.OrderRepository;
+import pl.excellentapp.brewery.order.domain.order.OrderStatus;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -22,25 +22,33 @@ class OrderServiceTest {
     private static final OffsetDateTime OFFSET_DATE_TIME = OffsetDateTime.of(2025, 1, 23, 12, 7, 0, 0, ZoneOffset.UTC);
 
     private final OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
-    private final DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
+    private final OrderFactory orderFactory = Mockito.mock(OrderFactory.class);
+    private final OrderEventPublisher orderEventPublisher = Mockito.mock(OrderEventPublisher.class);
 
-    private final OrderService orderService = new OrderServiceImpl(orderRepository, dateTimeProvider);
+    private final OrderService orderService = new OrderServiceImpl(orderRepository, orderFactory, orderEventPublisher);
 
 
     @Test
     void findAll_ShouldReturnListOfOrders() {
         // given
+        final var customerId1 = UUID.randomUUID();
+        final var customerId2 = UUID.randomUUID();
+        final var customerId3 = UUID.randomUUID();
+        final var customerId4 = UUID.randomUUID();
+        final var status1 = OrderStatus.NEW;
+        final var status2 = OrderStatus.READY;
+        final var status3 = OrderStatus.CANCELLED;
+        final var status4 = OrderStatus.NEW;
+        final var orderItem1 = new OrderItem(UUID.randomUUID(), 1);
+        final var orderItem2 = new OrderItem(UUID.randomUUID(), 2);
+        final var orderItem3 = new OrderItem(UUID.randomUUID(), 5);
+        final var orderItem4 = new OrderItem(UUID.randomUUID(), 7);
+        final var orderItem5 = new OrderItem(UUID.randomUUID(), 10);
         final var orders = List.of(
-                createOrder(UUID.fromString("1b4e28ba-2fa1-4d3b-a3f5-ef19b5a7633b"), OFFSET_DATE_TIME),
-                createOrder(UUID.fromString("2c4f2ed6-bd1d-4f9d-82c6-6b975b5cf5b3"), OFFSET_DATE_TIME),
-                createOrder(UUID.fromString("3a8e0e2f-587d-4b3c-b1c9-27f5d6c3627a"), OFFSET_DATE_TIME),
-                createOrder(UUID.fromString("4c9e7a3b-84e7-4f8e-95e2-cd2f1d56e6b7"), OFFSET_DATE_TIME),
-                createOrder(UUID.fromString("5d3f8e7c-9f2b-42e1-908d-cf3d1e678e9b"), OFFSET_DATE_TIME),
-                createOrder(UUID.fromString("6e8f9d4c-7c8a-45d1-8b4c-ed3f5a7b6e9d"), OFFSET_DATE_TIME),
-                createOrder(UUID.fromString("7f1b3c2d-8e9f-41b2-94c8-ef3d7a6b5c9f"), OFFSET_DATE_TIME),
-                createOrder(UUID.fromString("8a2d4e6f-9b3c-4e2f-b7d1-2c3f5a8e7b6d"), OFFSET_DATE_TIME),
-                createOrder(UUID.fromString("9c3e5d7a-b8f2-41c3-82e9-f2b1d6e5c4f7"), OFFSET_DATE_TIME),
-                createOrder(UUID.fromString("0d1e2f3b-5a7c-4d1f-8e9b-2f3d6a8b7c5f"), OFFSET_DATE_TIME)
+                createOrder(UUID.fromString("1b4e28ba-2fa1-4d3b-a3f5-ef19b5a7633b"), customerId1, status1, List.of(orderItem1, orderItem2), OFFSET_DATE_TIME),
+                createOrder(UUID.fromString("2c4f2ed6-bd1d-4f9d-82c6-6b975b5cf5b3"), customerId2, status2, List.of(orderItem3), OFFSET_DATE_TIME),
+                createOrder(UUID.fromString("3a8e0e2f-587d-4b3c-b1c9-27f5d6c3627a"), customerId3, status3, List.of(orderItem4), OFFSET_DATE_TIME),
+                createOrder(UUID.fromString("4c9e7a3b-84e7-4f8e-95e2-cd2f1d56e6b7"), customerId4, status4, List.of(orderItem5), OFFSET_DATE_TIME)
         );
         when(orderRepository.findAll()).thenReturn(orders);
 
@@ -48,7 +56,7 @@ class OrderServiceTest {
         final var result = orderService.findAll();
 
         // then
-        assertEquals(10, result.size());
+        assertEquals(4, result.size());
         assertEquals(orders, result);
         verify(orderRepository, times(1)).findAll();
     }
@@ -56,7 +64,10 @@ class OrderServiceTest {
     @Test
     void findById_ShouldReturnOrder_WhenOrderExists() {
         // given
-        final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), OFFSET_DATE_TIME);
+        final var customerId = UUID.randomUUID();
+        final var status = OrderStatus.NEW;
+        final var orderItem = new OrderItem(UUID.randomUUID(), 1);
+        final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), customerId, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
 
         // when
@@ -71,7 +82,10 @@ class OrderServiceTest {
     @Test
     void findById_ShouldThrowException_WhenOrderNotFound() {
         // given
-        final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), OFFSET_DATE_TIME);
+        final var customerId = UUID.randomUUID();
+        final var status = OrderStatus.NEW;
+        final var orderItem = new OrderItem(UUID.randomUUID(), 1);
+        final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), customerId, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.empty());
 
         // when
@@ -85,11 +99,14 @@ class OrderServiceTest {
     @Test
     void create_ShouldSaveAndReturnOrder() {
         // given
-        final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), OFFSET_DATE_TIME);
+        final var customerId = UUID.randomUUID();
+        final var status = OrderStatus.NEW;
+        final var orderItem = new OrderItem(UUID.randomUUID(), 1);
+        final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), customerId, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderRepository.save(order)).thenReturn(order);
 
         // when
-        final var result = orderService.create(order);
+        final var result = orderService.create(order.getCustomerId(), order.getItems());
 
         // then
         assertEquals(order, result);
@@ -99,14 +116,16 @@ class OrderServiceTest {
     @Test
     void update_ShouldUpdateAndReturnOrder() {
         // given
-        OffsetDateTime offsetDateTime = OffsetDateTime.of(2025, 1, 23, 12, 7, 10, 0, ZoneOffset.UTC);
-        final var originalOrder = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), OFFSET_DATE_TIME);
+        final var offsetDateTime = OffsetDateTime.of(2025, 1, 23, 12, 7, 10, 0, ZoneOffset.UTC);
+        final var customerId = UUID.randomUUID();
+        final var status = OrderStatus.NEW;
+        final var orderItem = new OrderItem(UUID.randomUUID(), 1);
+        final var originalOrder = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), customerId, status, List.of(orderItem), OFFSET_DATE_TIME);
         final var updateRequest = getUpdateRequest(originalOrder);
         final var expectedOrder = getExpectedOrder(updateRequest, offsetDateTime);
 
         when(orderRepository.findById(originalOrder.getId())).thenReturn(Optional.of(originalOrder));
         when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(dateTimeProvider.now()).thenReturn(offsetDateTime);
 
         // when
         final var result = orderService.update(originalOrder.getId(), updateRequest);
@@ -122,7 +141,10 @@ class OrderServiceTest {
     @Test
     void delete_ShouldDeleteOrder_WhenOrderExists() {
         // given
-        final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), OFFSET_DATE_TIME);
+        final var customerId = UUID.randomUUID();
+        final var status = OrderStatus.NEW;
+        final var orderItem = new OrderItem(UUID.randomUUID(), 1);
+        final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), customerId, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
         doNothing().when(orderRepository).deleteById(order.getId());
 
@@ -137,7 +159,10 @@ class OrderServiceTest {
     @Test
     void delete_ShouldThrowException_WhenOrderNotFound() {
         // given
-        final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), OFFSET_DATE_TIME);
+        final var customerId = UUID.randomUUID();
+        final var status = OrderStatus.NEW;
+        final var orderItem = new OrderItem(UUID.randomUUID(), 1);
+        final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), customerId, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.empty());
 
         // when
@@ -151,6 +176,9 @@ class OrderServiceTest {
     private Order getUpdateRequest(Order originalOrder) {
         return createOrder(
                 originalOrder.getId(),
+                originalOrder.getCustomerId(),
+                originalOrder.getOrderStatus(),
+                originalOrder.getItems(),
                 OFFSET_DATE_TIME
         );
     }
@@ -158,13 +186,20 @@ class OrderServiceTest {
     private Order getExpectedOrder(Order originalOrder, OffsetDateTime offsetDateTime) {
         return createOrder(
                 originalOrder.getId(),
+                originalOrder.getCustomerId(),
+                originalOrder.getOrderStatus(),
+                originalOrder.getItems(),
                 offsetDateTime
         );
     }
 
-    private Order createOrder(UUID id, OffsetDateTime offsetDateTime) {
+    private Order createOrder(UUID id, UUID customerId, OrderStatus orderStatus, List<OrderItem> items, OffsetDateTime offsetDateTime) {
         return Order.builder()
                 .id(id)
+                .customerId(customerId)
+                .orderStatus(orderStatus)
+                .items(items)
+                .orderDateTime(offsetDateTime)
                 .build();
     }
 }
