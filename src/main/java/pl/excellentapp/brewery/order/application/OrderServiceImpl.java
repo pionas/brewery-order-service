@@ -18,6 +18,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderFactory orderFactory;
+    private final OrderUpdated orderUpdated;
     private final OrderEventPublisher orderEventPublisher;
 
     @Override
@@ -38,13 +39,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order update(UUID orderId, Order order) {
-        final var currentOrder = getOrderById(orderId);
-        if (currentOrder.getOrderStatus() == OrderStatus.NEW) {
-            currentOrder.setOrderStatus(OrderStatus.READY);
-            orderEventPublisher.publishOrderCreatedEvent(currentOrder);
+    public Order update(UUID orderId, List<OrderItem> orderItems) {
+        final var order = orderUpdated.update(getOrderById(orderId), orderItems);
+        if (order.isReady()) {
+            orderEventPublisher.publishOrderReadyEvent(order);
         }
-        return orderRepository.save(currentOrder);
+        return orderRepository.save(order);
     }
 
     @Override
@@ -54,23 +54,25 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order markAsPickedUp(UUID id) {
+    public void markAsPickedUp(UUID id) {
         Order order = getOrderById(id);
         if (order.getOrderStatus() == OrderStatus.READY) {
             order.setOrderStatus(OrderStatus.PICKED_UP);
             orderEventPublisher.publishOrderPickedUpEvent(order);
-            return orderRepository.save(order);
+            orderRepository.save(order);
+            return;
         }
         throw new IllegalStateException("Order is not ready for pickup");
     }
 
     @Override
-    public Order cancelOrder(UUID id) {
+    public void cancelOrder(UUID id) {
         Order order = getOrderById(id);
         if (order.getOrderStatus() != OrderStatus.PICKED_UP) {
             order.setOrderStatus(OrderStatus.CANCELLED);
             orderEventPublisher.publishOrderCancelledEvent(order);
-            return orderRepository.save(order);
+            orderRepository.save(order);
+            return;
         }
         throw new IllegalStateException("Delivered orders cannot be cancelled");
     }

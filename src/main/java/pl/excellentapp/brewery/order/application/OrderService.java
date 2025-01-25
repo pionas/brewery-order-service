@@ -15,11 +15,11 @@ public interface OrderService {
 
     Order create(UUID customerId, List<OrderItem> orderItems);
 
-    Order update(UUID orderId, Order order);
+    Order update(UUID orderId, List<OrderItem> orderItems);
 
     void delete(UUID orderId);
 
-    Order markAsPickedUp(UUID id);
+    void markAsPickedUp(UUID id);
 
-    Order cancelOrder(UUID id);
+    void cancelOrder(UUID id);
 }

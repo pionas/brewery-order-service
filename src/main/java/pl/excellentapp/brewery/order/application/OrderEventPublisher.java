@@ -5,6 +5,7 @@ import pl.excellentapp.brewery.order.domain.event.OrderCancelledEvent;
 import pl.excellentapp.brewery.order.domain.event.OrderCreatedEvent;
 import pl.excellentapp.brewery.order.domain.event.OrderEventChannel;
 import pl.excellentapp.brewery.order.domain.event.OrderPickedUpEvent;
+import pl.excellentapp.brewery.order.domain.event.OrderReadyEvent;
 import pl.excellentapp.brewery.order.domain.order.Order;
 
 @RequiredArgsConstructor
@@ -31,6 +32,12 @@ public class OrderEventPublisher {
     public void publishOrderCancelledEvent(Order order) {
         eventChannel.publish(
                 new OrderCancelledEvent(order.getId())
+        );
+    }
+
+    public void publishOrderReadyEvent(Order order) {
+        eventChannel.publish(
+                new OrderReadyEvent(order.getId())
         );
     }
 }

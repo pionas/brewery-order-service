@@ -10,10 +10,10 @@ import java.util.UUID;
 @Data
 public class OrderItem {
 
-    private UUID beerId;
-    private Integer orderedQuantity;
-    private Integer reservedQuantity = 0;
-    private BigDecimal price = BigDecimal.ZERO;
+    private final UUID beerId;
+    private final Integer orderedQuantity;
+    private BigDecimal price;
+    private Integer reservedQuantity;
 
     public OrderItem(@NonNull UUID beerId, @NonNull Integer orderedQuantity) {
         if (orderedQuantity <= 0) {
@@ -21,18 +21,33 @@ public class OrderItem {
         }
         this.beerId = beerId;
         this.orderedQuantity = orderedQuantity;
+        this.price = BigDecimal.ZERO;
+        this.reservedQuantity = 0;
     }
 
-    public void reserved(Integer onHand, BigDecimal price) {
-        this.reservedQuantity += onHand;
+    public void reserve(Integer availableQuantity) {
+        if (availableQuantity == null || availableQuantity < 0) {
+            throw new IllegalArgumentException("Available quantity must be non-negative");
+        }
+        this.reservedQuantity += Math.min(this.orderedQuantity - this.reservedQuantity, availableQuantity);
+    }
+
+    public void updatePrice(@NonNull BigDecimal price) {
+        if (BigDecimal.ZERO.compareTo(price) >= 0) {
+            throw new IllegalArgumentException("Price must be greater than zero");
+        }
         this.price = price;
     }
 
-    public BigDecimal getTotalPrice() {
+    public BigDecimal calculateTotalPrice() {
         return price.multiply(new BigDecimal(orderedQuantity));
     }
 
     public boolean isFullyReserved() {
-        return orderedQuantity != null && Objects.equals(orderedQuantity, reservedQuantity);
+        return Objects.equals(orderedQuantity, reservedQuantity);
+    }
+
+    public boolean isNotFullyReserved() {
+        return !Objects.equals(orderedQuantity, reservedQuantity);
     }
 }
