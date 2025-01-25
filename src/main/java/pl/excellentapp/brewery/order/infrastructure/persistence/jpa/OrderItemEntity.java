@@ -24,7 +24,10 @@ public class OrderItemEntity {
     private OrderItemEntityId id;
 
     @Column(nullable = false)
-    private Integer quantity;
+    private Integer orderedQuantity;
+
+    @Column(nullable = false)
+    private Integer reservedQuantity;
 
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal price;

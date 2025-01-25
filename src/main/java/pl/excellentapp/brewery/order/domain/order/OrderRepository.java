@@ -1,4 +1,4 @@
-package pl.excellentapp.brewery.order.domain;
+package pl.excellentapp.brewery.order.domain.order;
 
 import java.util.List;
 import java.util.Optional;

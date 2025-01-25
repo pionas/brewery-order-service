@@ -1,7 +1,7 @@
 package pl.excellentapp.brewery.order.infrastructure.persistence.jpa;
 
 import org.mapstruct.Mapper;
-import pl.excellentapp.brewery.order.domain.Order;
+import pl.excellentapp.brewery.order.domain.order.Order;
 
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;

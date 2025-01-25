@@ -2,8 +2,8 @@ package pl.excellentapp.brewery.order.infrastructure.persistence.jpa;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
-import pl.excellentapp.brewery.order.domain.Order;
-import pl.excellentapp.brewery.order.domain.OrderRepository;
+import pl.excellentapp.brewery.order.domain.order.Order;
+import pl.excellentapp.brewery.order.domain.order.OrderRepository;
 
 import java.util.List;
 import java.util.Optional;

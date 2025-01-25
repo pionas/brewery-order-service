@@ -16,7 +16,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Version;
-import pl.excellentapp.brewery.order.domain.OrderStatus;
+import pl.excellentapp.brewery.order.domain.order.OrderStatus;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
