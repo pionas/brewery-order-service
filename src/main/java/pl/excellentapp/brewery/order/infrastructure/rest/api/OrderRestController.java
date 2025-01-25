@@ -55,7 +55,7 @@ class OrderRestController {
 
     @PutMapping("/{orderId}")
     public ResponseEntity<OrderResponse> updateOrder(@PathVariable("orderId") UUID orderId, @Valid @RequestBody OrderRequest orderRequest) {
-        final var orderResponse = orderRestMapper.map(orderService.update(orderId, orderRestMapper.map(orderRequest)));
+        final var orderResponse = orderRestMapper.map(orderService.update(orderId, orderRestMapper.mapToOrderItemList(orderRequest.getItems())));
 
         return new ResponseEntity<>(orderResponse, HttpStatus.OK);
     }
