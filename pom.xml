@@ -86,7 +86,7 @@
                         <format>HTML</format>
                     </outputFormats>
                     <excludedClasses>
-                        <param>pl.excellentapp.brewery.order.order.**.*Mapper*</param>
+                        <param>pl.excellentapp.brewery.order.**.*Mapper*</param>
                     </excludedClasses>
                 </configuration>
             </plugin>
