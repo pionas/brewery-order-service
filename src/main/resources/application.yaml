@@ -11,3 +11,6 @@ spring:
       enabled: true
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+  artemis:
+    user: artemis-user
+    password: artemis-password
