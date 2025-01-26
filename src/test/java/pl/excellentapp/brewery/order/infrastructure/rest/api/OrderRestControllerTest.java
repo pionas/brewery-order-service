@@ -17,6 +17,8 @@ import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderRequest;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderResponse;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrdersResponse;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.mapper.OrderRestMapper;
+import pl.excellentapp.brewery.order.infrastructure.rest.handler.GlobalExceptionHandler;
+import pl.excellentapp.brewery.order.utils.DateTimeProvider;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +39,9 @@ class OrderRestControllerTest extends AbstractMvcTest {
     @Mock
     private OrderService orderService;
 
+    @Mock
+    private DateTimeProvider dateTimeProvider;
+
     @Spy
     private OrderRestMapper orderRestMapper = Mappers.getMapper(OrderRestMapper.class);
 
@@ -46,6 +51,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
     void setUp() {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)
+                .setControllerAdvice(new GlobalExceptionHandler(dateTimeProvider))
                 .build();
     }
 
