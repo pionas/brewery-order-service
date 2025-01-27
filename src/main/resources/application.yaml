@@ -14,3 +14,11 @@ spring:
   artemis:
     user: artemis-user
     password: artemis-password
+
+queue:
+  inventory:
+    reserve-stock: beer-inventory-reserve-stock
+    release-stock: beer-inventory-release-stock
+  notification:
+    email: beer-notification-send-email
+    sms: beer-notification-send-sms
