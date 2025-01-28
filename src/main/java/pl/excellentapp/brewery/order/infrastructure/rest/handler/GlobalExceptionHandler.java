@@ -31,12 +31,6 @@ public class GlobalExceptionHandler {
         return handleError(HttpStatus.NOT_FOUND, List.of(ex.getMessage()));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handle(Exception ex) {
-        log.error("An unexpected error occurred", ex);
-        return handleError(HttpStatus.INTERNAL_SERVER_ERROR, List.of(ex.getMessage()));
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         log.warn("Validation error: {}", ex.getMessage());
