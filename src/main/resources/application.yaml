@@ -22,3 +22,14 @@ queue:
   notification:
     email: beer-notification-send-email
     sms: beer-notification-send-sms
+
+http-client:
+  max-total: 50
+  max-per-route: 20
+  socket-timeout: PT5S
+  idle-timeout: PT60S
+  keep-alive-time: PT5S
+
+rest:
+  inventory:
+    service: "http://localhost:8081/api/v1/inventories/"
