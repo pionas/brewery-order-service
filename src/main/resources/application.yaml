@@ -33,3 +33,5 @@ http-client:
 rest:
   inventory:
     service: "http://localhost:8081/api/v1/inventories/"
+server:
+  port: 8082
