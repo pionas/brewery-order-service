@@ -1,15 +1,19 @@
 package pl.excellentapp.brewery.order.domain.event;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import pl.excellentapp.brewery.order.domain.order.OrderStatus;
 
 import java.util.UUID;
 
 @Getter
-public class OrderReadyEvent {
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrderReadyEvent extends Event {
 
-    private final UUID orderId;
-    private final OrderStatus status = OrderStatus.READY;
+    private UUID orderId;
+    private OrderStatus status = OrderStatus.READY;
 
     public OrderReadyEvent(UUID orderId) {
         this.orderId = orderId;

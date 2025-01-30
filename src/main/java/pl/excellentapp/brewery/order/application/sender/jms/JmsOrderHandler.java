@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
+ import pl.excellentapp.brewery.order.domain.event.Event;
 import pl.excellentapp.brewery.order.domain.event.OrderCancelledEvent;
 import pl.excellentapp.brewery.order.domain.event.OrderCreatedEvent;
 import pl.excellentapp.brewery.order.domain.event.OrderPickedUpEvent;
@@ -64,7 +65,7 @@ class JmsOrderHandler {
         sendAndWaitForAnswer(jmsReleaseStockQueueName, event); // TODO: create release stock for beer event
     }
 
-    private void sendAndWaitForAnswer(String queueName, Object event) {
+    private void sendAndWaitForAnswer(String queueName, Event event) {
         try {
             jmsTemplate.sendAndReceive(queueName, session -> {
                 try {
