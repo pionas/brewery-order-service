@@ -1,4 +1,4 @@
-package pl.excellentapp.brewery.order.domain.event;
+package pl.excellentapp.brewery.common.events;
 
 public interface OrderEventChannel {
 

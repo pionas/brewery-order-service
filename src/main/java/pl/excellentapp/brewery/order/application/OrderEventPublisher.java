@@ -1,11 +1,11 @@
 package pl.excellentapp.brewery.order.application;
 
 import lombok.RequiredArgsConstructor;
-import pl.excellentapp.brewery.order.domain.event.OrderCancelledEvent;
-import pl.excellentapp.brewery.order.domain.event.OrderCreatedEvent;
-import pl.excellentapp.brewery.order.domain.event.OrderEventChannel;
-import pl.excellentapp.brewery.order.domain.event.OrderPickedUpEvent;
-import pl.excellentapp.brewery.order.domain.event.OrderReadyEvent;
+import pl.excellentapp.brewery.common.events.OrderCancelledEvent;
+import pl.excellentapp.brewery.common.events.OrderCreatedEvent;
+import pl.excellentapp.brewery.common.events.OrderEventChannel;
+import pl.excellentapp.brewery.common.events.OrderPickedUpEvent;
+import pl.excellentapp.brewery.common.events.OrderReadyEvent;
 import pl.excellentapp.brewery.order.domain.order.Order;
 
 @RequiredArgsConstructor

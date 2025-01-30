@@ -1,4 +1,4 @@
-package pl.excellentapp.brewery.order.domain.event;
+package pl.excellentapp.brewery.common.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,15 +8,14 @@ import pl.excellentapp.brewery.order.domain.order.OrderStatus;
 import java.util.UUID;
 
 @Getter
-
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderPickedUpEvent extends Event {
+public class OrderReadyEvent extends Event {
 
     private UUID orderId;
-    private OrderStatus status = OrderStatus.PICKED_UP;
+    private OrderStatus status = OrderStatus.READY;
 
-    public OrderPickedUpEvent(UUID orderId) {
+    public OrderReadyEvent(UUID orderId) {
         this.orderId = orderId;
     }
 }
