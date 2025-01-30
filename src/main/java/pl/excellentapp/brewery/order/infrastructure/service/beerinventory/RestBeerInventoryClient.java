@@ -1,15 +1,23 @@
 package pl.excellentapp.brewery.order.infrastructure.service.beerinventory;
 
+import lombok.AllArgsConstructor;
+import org.springframework.web.client.RestTemplate;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventory;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventoryService;
 
+import java.util.Objects;
 import java.util.UUID;
 
+@AllArgsConstructor
 class RestBeerInventoryClient implements BeerInventoryService {
 
-    // TODO: add rest client
+    private static final String BEER_ID = "/{beerId}";
+    private final RestTemplate restTemplate;
+    private final String url;
+
     @Override
     public BeerInventory getInventory(UUID beerId) {
-        return null;
+        return Objects.requireNonNull(restTemplate.getForObject(url + BEER_ID, BeerInventoryResponse.class, beerId))
+                .toBeerInventory();
     }
 }
