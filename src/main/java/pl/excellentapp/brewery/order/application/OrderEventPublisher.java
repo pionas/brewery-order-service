@@ -18,7 +18,7 @@ public class OrderEventPublisher {
                 .orderId(order.getId())
                 .customerId(order.getCustomerId())
                 .totalPrice(order.getTotalPrice())
-                .status(order.getOrderStatus())
+                .status(order.getBeerOrderStatus())
                 .build()
         );
     }

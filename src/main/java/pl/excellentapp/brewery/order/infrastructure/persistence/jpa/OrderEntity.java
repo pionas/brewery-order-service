@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import pl.excellentapp.brewery.order.domain.order.OrderStatus;
+import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -41,7 +41,7 @@ public class OrderEntity {
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+    private BeerOrderStatus beerOrderStatus;
 
     @Version
     private Long version;

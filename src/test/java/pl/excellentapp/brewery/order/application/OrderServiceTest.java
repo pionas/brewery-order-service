@@ -3,10 +3,10 @@ package pl.excellentapp.brewery.order.application;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pl.excellentapp.brewery.order.domain.exception.OrderNotFoundException;
+import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.Order;
 import pl.excellentapp.brewery.order.domain.order.OrderItem;
 import pl.excellentapp.brewery.order.domain.order.OrderRepository;
-import pl.excellentapp.brewery.order.domain.order.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -55,10 +55,10 @@ class OrderServiceTest {
         final var customerId2 = UUID.fromString("30079a35-3402-410c-b7ba-b8ad079bb710");
         final var customerId3 = UUID.fromString("054ad93c-b47e-46b7-8fe8-e836b3f1f6f8");
         final var customerId4 = UUID.fromString("7199a48e-e5bb-41e6-bc71-7c27b34aa3e7");
-        final var status1 = OrderStatus.NEW;
-        final var status2 = OrderStatus.READY;
-        final var status3 = OrderStatus.CANCELLED;
-        final var status4 = OrderStatus.NEW;
+        final var status1 = BeerOrderStatus.NEW;
+        final var status2 = BeerOrderStatus.READY;
+        final var status3 = BeerOrderStatus.CANCELLED;
+        final var status4 = BeerOrderStatus.NEW;
         final var orderItem1 = new OrderItem(UUID.randomUUID(), 1);
         final var orderItem2 = new OrderItem(UUID.randomUUID(), 2);
         final var orderItem3 = new OrderItem(UUID.randomUUID(), 5);
@@ -87,7 +87,7 @@ class OrderServiceTest {
         final var beerId = UUID.fromString("34a13d2f-b953-4b25-b529-d9f00c1ba41c");
         final var orderId = UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936");
         final var customerId = UUID.fromString("b78f9a11-cbc0-4f1c-b7c5-16e62cc25732");
-        final var status = OrderStatus.NEW;
+        final var status = BeerOrderStatus.NEW;
         final var orderItem = new OrderItem(beerId, 1);
         final var order = createOrder(orderId, customerId, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
@@ -121,7 +121,7 @@ class OrderServiceTest {
         final var customerId = UUID.fromString("b78f9a11-cbc0-4f1c-b7c5-16e62cc25732");
         final var orderId = UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936");
         final var beerId = UUID.fromString("34a13d2f-b953-4b25-b529-d9f00c1ba41c");
-        final var status = OrderStatus.NEW;
+        final var status = BeerOrderStatus.NEW;
         final var orderItem = new OrderItem(beerId, 1);
         final var order = createOrder(orderId, customerId, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderFactory.createOrder(customerId, List.of(orderItem))).thenReturn(order);
@@ -139,7 +139,7 @@ class OrderServiceTest {
     @Test
     void shouldUpdateOrderWithoutProduceReadyEvent() {
         // given
-        final var status = OrderStatus.NEW;
+        final var status = BeerOrderStatus.NEW;
         final var item1 = getOrderItem(BEER_ID_1, 11, BigDecimal.valueOf(3.33), 11);
         final var item2 = getOrderItem(BEER_ID_2, 3, BigDecimal.valueOf(4.44), 3);
         final var item3 = getOrderItem(BEER_ID_3, 2, BigDecimal.valueOf(5.55), 2);
@@ -162,7 +162,7 @@ class OrderServiceTest {
     @Test
     void shouldUpdateOrderAndProduceReadyEvent() {
         // given
-        final var status = OrderStatus.READY;
+        final var status = BeerOrderStatus.READY;
         final var item1 = getOrderItem(BEER_ID_1, 11, BigDecimal.valueOf(3.33), 11);
         final var item2 = getOrderItem(BEER_ID_2, 3, BigDecimal.valueOf(4.44), 3);
         final var item3 = getOrderItem(BEER_ID_3, 2, BigDecimal.valueOf(5.55), 2);
@@ -185,7 +185,7 @@ class OrderServiceTest {
     @Test
     void shouldDeleteOrder() {
         // given
-        final var status = OrderStatus.NEW;
+        final var status = BeerOrderStatus.NEW;
         final var orderItem = new OrderItem(UUID.randomUUID(), 1);
         final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), CUSTOMER_ID, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
@@ -231,7 +231,7 @@ class OrderServiceTest {
     @Test
     void shouldMarkAsPickedUpAndProduceEvent() {
         // given
-        final var status = OrderStatus.READY;
+        final var status = BeerOrderStatus.READY;
         final var orderItem = new OrderItem(UUID.randomUUID(), 1);
         final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), CUSTOMER_ID, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
@@ -247,7 +247,7 @@ class OrderServiceTest {
     @Test
     void shouldMarkAsPickedUpWithoutProduceEvent() {
         // given
-        final var status = OrderStatus.NEW;
+        final var status = BeerOrderStatus.NEW;
         final var orderItem = new OrderItem(UUID.randomUUID(), 1);
         final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), CUSTOMER_ID, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
@@ -262,11 +262,11 @@ class OrderServiceTest {
         verify(orderRepository, never()).save(any());
     }
 
-    private Order createOrder(UUID id, UUID customerId, OrderStatus orderStatus, List<OrderItem> items, OffsetDateTime offsetDateTime) {
+    private Order createOrder(UUID id, UUID customerId, BeerOrderStatus beerOrderStatus, List<OrderItem> items, OffsetDateTime offsetDateTime) {
         return Order.builder()
                 .id(id)
                 .customerId(customerId)
-                .orderStatus(orderStatus)
+                .beerOrderStatus(beerOrderStatus)
                 .items(items)
                 .orderDateTime(offsetDateTime)
                 .build();

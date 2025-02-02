@@ -3,10 +3,10 @@ package pl.excellentapp.brewery.order.application;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.excellentapp.brewery.order.domain.exception.OrderNotFoundException;
+import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.Order;
 import pl.excellentapp.brewery.order.domain.order.OrderItem;
 import pl.excellentapp.brewery.order.domain.order.OrderRepository;
-import pl.excellentapp.brewery.order.domain.order.OrderStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,8 +56,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void markAsPickedUp(UUID id) {
         Order order = getOrderById(id);
-        if (order.getOrderStatus() == OrderStatus.READY) {
-            order.setOrderStatus(OrderStatus.PICKED_UP);
+        if (order.getBeerOrderStatus() == BeerOrderStatus.READY) {
+            order.setBeerOrderStatus(BeerOrderStatus.PICKED_UP);
             orderEventPublisher.publishOrderPickedUpEvent(order);
             orderRepository.save(order);
             return;
@@ -68,8 +68,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(UUID id) {
         Order order = getOrderById(id);
-        if (order.getOrderStatus() != OrderStatus.PICKED_UP) {
-            order.setOrderStatus(OrderStatus.CANCELLED);
+        if (order.getBeerOrderStatus() != BeerOrderStatus.PICKED_UP) {
+            order.setBeerOrderStatus(BeerOrderStatus.CANCELLED);
             orderEventPublisher.publishOrderCancelledEvent(order);
             orderRepository.save(order);
             return;

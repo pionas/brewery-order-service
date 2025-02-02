@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventory;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventoryService;
+import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.OrderItem;
-import pl.excellentapp.brewery.order.domain.order.OrderStatus;
 import pl.excellentapp.brewery.order.utils.DateTimeProvider;
 import pl.excellentapp.brewery.order.utils.ModelIdProvider;
 
@@ -74,7 +74,7 @@ class OrderFactoryTest {
         assertEquals(CUSTOMER_ID, order.getCustomerId());
         assertEquals(OFFSET_DATE_TIME, order.getOrderDateTime());
         assertEquals(BigDecimal.valueOf(124.86), order.getTotalPrice());
-        assertEquals(OrderStatus.READY, order.getOrderStatus());
+        assertEquals(BeerOrderStatus.READY, order.getBeerOrderStatus());
         List<OrderItem> orderItems = order.getItems();
         assertEquals(2, orderItems.size());
         OrderItem orderItem1 = orderItems.getFirst();
@@ -110,7 +110,7 @@ class OrderFactoryTest {
         assertEquals(CUSTOMER_ID, order.getCustomerId());
         assertEquals(OFFSET_DATE_TIME, order.getOrderDateTime());
         assertEquals(BigDecimal.valueOf(25), order.getTotalPrice());
-        assertEquals(OrderStatus.NEW, order.getOrderStatus());
+        assertEquals(BeerOrderStatus.NEW, order.getBeerOrderStatus());
         List<OrderItem> orderItems = order.getItems();
         assertEquals(2, orderItems.size());
         OrderItem orderItem1 = orderItems.getFirst();
@@ -146,7 +146,7 @@ class OrderFactoryTest {
         assertEquals(CUSTOMER_ID, order.getCustomerId());
         assertEquals(OFFSET_DATE_TIME, order.getOrderDateTime());
         assertEquals(BigDecimal.valueOf(85), order.getTotalPrice());
-        assertEquals(OrderStatus.NEW, order.getOrderStatus());
+        assertEquals(BeerOrderStatus.NEW, order.getBeerOrderStatus());
         List<OrderItem> orderItems = order.getItems();
         assertEquals(2, orderItems.size());
         OrderItem orderItem1 = orderItems.getFirst();

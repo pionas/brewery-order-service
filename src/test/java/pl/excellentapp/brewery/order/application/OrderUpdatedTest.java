@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventory;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventoryService;
+import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.Order;
 import pl.excellentapp.brewery.order.domain.order.OrderItem;
-import pl.excellentapp.brewery.order.domain.order.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -34,7 +34,7 @@ class OrderUpdatedTest {
     @Test
     void shouldUpdateNothing() {
         // given
-        final var status = OrderStatus.READY;
+        final var status = BeerOrderStatus.READY;
         final var beerInventory1 = new BeerInventory(BEER_ID_1, "Beer1", 15, BigDecimal.valueOf(9.99));
         final var beerInventory2 = new BeerInventory(BEER_ID_2, "Beer2", 5, BigDecimal.valueOf(4.99));
         final var beerInventory3 = new BeerInventory(BEER_ID_3, "Beer3", 5, BigDecimal.valueOf(4.99));
@@ -55,7 +55,7 @@ class OrderUpdatedTest {
         assertEquals(CUSTOMER_ID, updatedOrder.getCustomerId());
         assertEquals(BigDecimal.valueOf(49.95), updatedOrder.getTotalPrice());
         assertEquals(OFFSET_DATE_TIME, updatedOrder.getOrderDateTime());
-        assertEquals(OrderStatus.READY, updatedOrder.getOrderStatus());
+        assertEquals(BeerOrderStatus.READY, updatedOrder.getBeerOrderStatus());
         assertEquals(1L, updatedOrder.getVersion());
         assertNull(updatedOrder.getLastModifiedDate());
         final var orderItems = updatedOrder.getItems();
@@ -75,7 +75,7 @@ class OrderUpdatedTest {
     @Test
     void shouldUpdateOrderStatusToReady() {
         // given
-        final var status = OrderStatus.NEW;
+        final var status = BeerOrderStatus.NEW;
         final var beerInventory1 = new BeerInventory(BEER_ID_1, "Beer1", 15, BigDecimal.valueOf(9.99));
         final var beerInventory2 = new BeerInventory(BEER_ID_2, "Beer2", 5, BigDecimal.valueOf(4.99));
         final var beerInventory3 = new BeerInventory(BEER_ID_3, "Beer3", 5, BigDecimal.valueOf(4.99));
@@ -96,7 +96,7 @@ class OrderUpdatedTest {
         assertEquals(CUSTOMER_ID, updatedOrder.getCustomerId());
         assertEquals(BigDecimal.valueOf(49.95), updatedOrder.getTotalPrice());
         assertEquals(OFFSET_DATE_TIME, updatedOrder.getOrderDateTime());
-        assertEquals(OrderStatus.READY, updatedOrder.getOrderStatus());
+        assertEquals(BeerOrderStatus.READY, updatedOrder.getBeerOrderStatus());
         assertEquals(1L, updatedOrder.getVersion());
         assertNull(updatedOrder.getLastModifiedDate());
         final var orderItems = updatedOrder.getItems();
@@ -116,7 +116,7 @@ class OrderUpdatedTest {
     @Test
     void shouldUpdateFragmentOrderItemReservedQuantity() {
         // given
-        final var status = OrderStatus.NEW;
+        final var status = BeerOrderStatus.NEW;
         final var beerInventory1 = new BeerInventory(BEER_ID_1, "Beer1", 3, BigDecimal.valueOf(9.99));
         final var beerInventory2 = new BeerInventory(BEER_ID_2, "Beer2", 1, BigDecimal.valueOf(4.99));
         final var beerInventory3 = new BeerInventory(BEER_ID_3, "Beer3", 1, BigDecimal.valueOf(4.99));
@@ -137,7 +137,7 @@ class OrderUpdatedTest {
         assertEquals(CUSTOMER_ID, updatedOrder.getCustomerId());
         assertEquals(BigDecimal.valueOf(49.95), updatedOrder.getTotalPrice());
         assertEquals(OFFSET_DATE_TIME, updatedOrder.getOrderDateTime());
-        assertEquals(OrderStatus.NEW, updatedOrder.getOrderStatus());
+        assertEquals(BeerOrderStatus.NEW, updatedOrder.getBeerOrderStatus());
         assertEquals(1L, updatedOrder.getVersion());
         assertNull(updatedOrder.getLastModifiedDate());
         final var orderItems = updatedOrder.getItems();
@@ -161,12 +161,12 @@ class OrderUpdatedTest {
         return orderItem;
     }
 
-    private Order createOrder(UUID id, UUID customerId, OrderStatus orderStatus, List<OrderItem> items, OffsetDateTime offsetDateTime) {
+    private Order createOrder(UUID id, UUID customerId, BeerOrderStatus beerOrderStatus, List<OrderItem> items, OffsetDateTime offsetDateTime) {
         return Order.builder()
                 .id(id)
                 .version(1L)
                 .customerId(customerId)
-                .orderStatus(orderStatus)
+                .beerOrderStatus(beerOrderStatus)
                 .items(items)
                 .orderDateTime(offsetDateTime)
                 .build();

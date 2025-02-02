@@ -3,7 +3,7 @@ package pl.excellentapp.brewery.common.events;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import pl.excellentapp.brewery.order.domain.order.OrderStatus;
+import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ import java.util.UUID;
 public class OrderReadyEvent extends Event {
 
     private UUID orderId;
-    private OrderStatus status = OrderStatus.READY;
+    private BeerOrderStatus status = BeerOrderStatus.READY;
 
     public OrderReadyEvent(UUID orderId) {
         this.orderId = orderId;
