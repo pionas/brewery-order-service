@@ -34,7 +34,7 @@ class OrderUpdatedTest {
     @Test
     void shouldUpdateNothing() {
         // given
-        final var status = BeerOrderStatus.READY;
+        final var status = BeerOrderStatus.ALLOCATED;
         final var beerInventory1 = new BeerInventory(BEER_ID_1, "Beer1", 15, BigDecimal.valueOf(9.99));
         final var beerInventory2 = new BeerInventory(BEER_ID_2, "Beer2", 5, BigDecimal.valueOf(4.99));
         final var beerInventory3 = new BeerInventory(BEER_ID_3, "Beer3", 5, BigDecimal.valueOf(4.99));
@@ -55,7 +55,7 @@ class OrderUpdatedTest {
         assertEquals(CUSTOMER_ID, updatedOrder.getCustomerId());
         assertEquals(BigDecimal.valueOf(49.95), updatedOrder.getTotalPrice());
         assertEquals(OFFSET_DATE_TIME, updatedOrder.getOrderDateTime());
-        assertEquals(BeerOrderStatus.READY, updatedOrder.getBeerOrderStatus());
+        assertEquals(BeerOrderStatus.ALLOCATED, updatedOrder.getOrderStatus());
         assertEquals(1L, updatedOrder.getVersion());
         assertNull(updatedOrder.getLastModifiedDate());
         final var orderItems = updatedOrder.getItems();
@@ -96,7 +96,7 @@ class OrderUpdatedTest {
         assertEquals(CUSTOMER_ID, updatedOrder.getCustomerId());
         assertEquals(BigDecimal.valueOf(49.95), updatedOrder.getTotalPrice());
         assertEquals(OFFSET_DATE_TIME, updatedOrder.getOrderDateTime());
-        assertEquals(BeerOrderStatus.READY, updatedOrder.getBeerOrderStatus());
+        assertEquals(BeerOrderStatus.ALLOCATED, updatedOrder.getOrderStatus());
         assertEquals(1L, updatedOrder.getVersion());
         assertNull(updatedOrder.getLastModifiedDate());
         final var orderItems = updatedOrder.getItems();
@@ -137,7 +137,7 @@ class OrderUpdatedTest {
         assertEquals(CUSTOMER_ID, updatedOrder.getCustomerId());
         assertEquals(BigDecimal.valueOf(49.95), updatedOrder.getTotalPrice());
         assertEquals(OFFSET_DATE_TIME, updatedOrder.getOrderDateTime());
-        assertEquals(BeerOrderStatus.NEW, updatedOrder.getBeerOrderStatus());
+        assertEquals(BeerOrderStatus.NEW, updatedOrder.getOrderStatus());
         assertEquals(1L, updatedOrder.getVersion());
         assertNull(updatedOrder.getLastModifiedDate());
         final var orderItems = updatedOrder.getItems();
@@ -166,7 +166,7 @@ class OrderUpdatedTest {
                 .id(id)
                 .version(1L)
                 .customerId(customerId)
-                .beerOrderStatus(beerOrderStatus)
+                .orderStatus(beerOrderStatus)
                 .items(items)
                 .orderDateTime(offsetDateTime)
                 .build();

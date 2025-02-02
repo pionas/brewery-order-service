@@ -7,7 +7,7 @@ import pl.excellentapp.brewery.common.events.OrderCancelledEvent;
 import pl.excellentapp.brewery.common.events.OrderCreatedEvent;
 import pl.excellentapp.brewery.common.events.OrderEventChannel;
 import pl.excellentapp.brewery.common.events.OrderPickedUpEvent;
-import pl.excellentapp.brewery.common.events.OrderReadyEvent;
+import pl.excellentapp.brewery.common.events.OrderAllocatedEvent;
 
 @Component
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ class SpringOrderEventChannel implements OrderEventChannel {
     }
 
     @Override
-    public void publish(OrderReadyEvent event) {
+    public void publish(OrderAllocatedEvent event) {
         publisher.publishEvent(event);
     }
 

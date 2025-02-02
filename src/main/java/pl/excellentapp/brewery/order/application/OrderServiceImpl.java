@@ -56,8 +56,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void markAsPickedUp(UUID id) {
         Order order = getOrderById(id);
-        if (order.getBeerOrderStatus() == BeerOrderStatus.READY) {
-            order.setBeerOrderStatus(BeerOrderStatus.PICKED_UP);
+        if (order.getOrderStatus() == BeerOrderStatus.ALLOCATED) {
+            order.setOrderStatus(BeerOrderStatus.PICKED_UP);
             orderEventPublisher.publishOrderPickedUpEvent(order);
             orderRepository.save(order);
             return;
@@ -68,8 +68,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(UUID id) {
         Order order = getOrderById(id);
-        if (order.getBeerOrderStatus() != BeerOrderStatus.PICKED_UP) {
-            order.setBeerOrderStatus(BeerOrderStatus.CANCELLED);
+        if (order.getOrderStatus() != BeerOrderStatus.PICKED_UP) {
+            order.setOrderStatus(BeerOrderStatus.CANCELLED_BY_USER);
             orderEventPublisher.publishOrderCancelledEvent(order);
             orderRepository.save(order);
             return;

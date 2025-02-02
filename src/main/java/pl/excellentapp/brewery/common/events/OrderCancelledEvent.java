@@ -13,7 +13,7 @@ import java.util.UUID;
 public class OrderCancelledEvent extends Event {
 
     private UUID orderId;
-    private BeerOrderStatus status = BeerOrderStatus.CANCELLED;
+    private BeerOrderStatus status;
 
     public OrderCancelledEvent(UUID orderId) {
         this.orderId = orderId;

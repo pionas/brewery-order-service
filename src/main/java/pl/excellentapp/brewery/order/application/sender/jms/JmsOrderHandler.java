@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import pl.excellentapp.brewery.common.events.OrderCancelledEvent;
 import pl.excellentapp.brewery.common.events.OrderCreatedEvent;
 import pl.excellentapp.brewery.common.events.OrderPickedUpEvent;
-import pl.excellentapp.brewery.common.events.OrderReadyEvent;
+import pl.excellentapp.brewery.common.events.OrderAllocatedEvent;
 
 @Component
 @Slf4j
@@ -48,7 +48,7 @@ class JmsOrderHandler {
     }
 
     @EventListener
-    public void publish(OrderReadyEvent event) {
+    public void publish(OrderAllocatedEvent event) {
         sendAndWaitForAnswer(jmsReserveStockQueueName, event); // TODO: create reserve stock for beer event
         sendAndWaitForAnswer(jmsNotificationEmailQueueName, event); // TODO: create email notification for customer
         sendAndWaitForAnswer(jmsNotificationSmsQueueName, event); // TODO: create sms notification for customer

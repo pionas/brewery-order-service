@@ -56,8 +56,8 @@ class OrderServiceTest {
         final var customerId3 = UUID.fromString("054ad93c-b47e-46b7-8fe8-e836b3f1f6f8");
         final var customerId4 = UUID.fromString("7199a48e-e5bb-41e6-bc71-7c27b34aa3e7");
         final var status1 = BeerOrderStatus.NEW;
-        final var status2 = BeerOrderStatus.READY;
-        final var status3 = BeerOrderStatus.CANCELLED;
+        final var status2 = BeerOrderStatus.ALLOCATED;
+        final var status3 = BeerOrderStatus.CANCELLED_BY_USER;
         final var status4 = BeerOrderStatus.NEW;
         final var orderItem1 = new OrderItem(UUID.randomUUID(), 1);
         final var orderItem2 = new OrderItem(UUID.randomUUID(), 2);
@@ -162,7 +162,7 @@ class OrderServiceTest {
     @Test
     void shouldUpdateOrderAndProduceReadyEvent() {
         // given
-        final var status = BeerOrderStatus.READY;
+        final var status = BeerOrderStatus.ALLOCATED;
         final var item1 = getOrderItem(BEER_ID_1, 11, BigDecimal.valueOf(3.33), 11);
         final var item2 = getOrderItem(BEER_ID_2, 3, BigDecimal.valueOf(4.44), 3);
         final var item3 = getOrderItem(BEER_ID_3, 2, BigDecimal.valueOf(5.55), 2);
@@ -231,7 +231,7 @@ class OrderServiceTest {
     @Test
     void shouldMarkAsPickedUpAndProduceEvent() {
         // given
-        final var status = BeerOrderStatus.READY;
+        final var status = BeerOrderStatus.ALLOCATED;
         final var orderItem = new OrderItem(UUID.randomUUID(), 1);
         final var order = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), CUSTOMER_ID, status, List.of(orderItem), OFFSET_DATE_TIME);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
@@ -266,7 +266,7 @@ class OrderServiceTest {
         return Order.builder()
                 .id(id)
                 .customerId(customerId)
-                .beerOrderStatus(beerOrderStatus)
+                .orderStatus(beerOrderStatus)
                 .items(items)
                 .orderDateTime(offsetDateTime)
                 .build();

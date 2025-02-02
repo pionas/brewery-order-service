@@ -10,12 +10,12 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderReadyEvent extends Event {
+public class OrderAllocatedEvent extends Event {
 
     private UUID orderId;
-    private BeerOrderStatus status = BeerOrderStatus.READY;
+    private BeerOrderStatus status = BeerOrderStatus.ALLOCATED;
 
-    public OrderReadyEvent(UUID orderId) {
+    public OrderAllocatedEvent(UUID orderId) {
         this.orderId = orderId;
     }
 }

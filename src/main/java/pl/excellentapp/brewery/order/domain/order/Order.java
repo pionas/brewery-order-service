@@ -23,7 +23,7 @@ public class Order {
     private List<OrderItem> items = new ArrayList<>();
     private BigDecimal totalPrice = BigDecimal.ZERO;
     private OffsetDateTime orderDateTime;
-    private BeerOrderStatus beerOrderStatus;
+    private BeerOrderStatus orderStatus;
 
     private Long version;
     private OffsetDateTime lastModifiedDate;
@@ -33,14 +33,14 @@ public class Order {
                 .allMatch(OrderItem::isFullyReserved);
 
         if (allItemsReserved) {
-            beerOrderStatus = BeerOrderStatus.READY;
+            orderStatus = BeerOrderStatus.ALLOCATED;
         } else {
-            beerOrderStatus = BeerOrderStatus.NEW;
+            orderStatus = BeerOrderStatus.NEW;
         }
     }
 
     public boolean isReady() {
-        return BeerOrderStatus.READY == beerOrderStatus;
+        return BeerOrderStatus.ALLOCATED == orderStatus;
     }
 
     public void calculateTotalPrice() {

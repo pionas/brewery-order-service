@@ -41,7 +41,7 @@ public class OrderEntity {
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
-    private BeerOrderStatus beerOrderStatus;
+    private BeerOrderStatus orderStatus;
 
     @Version
     private Long version;

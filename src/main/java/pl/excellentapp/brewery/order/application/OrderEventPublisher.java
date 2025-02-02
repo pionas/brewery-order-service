@@ -5,7 +5,7 @@ import pl.excellentapp.brewery.common.events.OrderCancelledEvent;
 import pl.excellentapp.brewery.common.events.OrderCreatedEvent;
 import pl.excellentapp.brewery.common.events.OrderEventChannel;
 import pl.excellentapp.brewery.common.events.OrderPickedUpEvent;
-import pl.excellentapp.brewery.common.events.OrderReadyEvent;
+import pl.excellentapp.brewery.common.events.OrderAllocatedEvent;
 import pl.excellentapp.brewery.order.domain.order.Order;
 
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class OrderEventPublisher {
                 .orderId(order.getId())
                 .customerId(order.getCustomerId())
                 .totalPrice(order.getTotalPrice())
-                .status(order.getBeerOrderStatus())
+                .status(order.getOrderStatus())
                 .build()
         );
     }
@@ -37,7 +37,7 @@ public class OrderEventPublisher {
 
     public void publishOrderReadyEvent(Order order) {
         eventChannel.publish(
-                new OrderReadyEvent(order.getId())
+                new OrderAllocatedEvent(order.getId())
         );
     }
 }
