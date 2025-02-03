@@ -2,6 +2,7 @@ package pl.excellentapp.brewery.order.application;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.data.util.Pair;
 import pl.excellentapp.brewery.order.domain.exception.OrderNotFoundException;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.Order;
@@ -38,14 +39,16 @@ class OrderServiceTest {
     @Test
     void shouldReturnEmptyList() {
         // given
-        when(orderRepository.findAll()).thenReturn(Collections.emptyList());
+        when(orderRepository.list(any(), any())).thenReturn(Pair.of(Collections.emptyList(), 0));
 
         // when
-        final var result = orderService.findAll();
+        final var result = orderService.list(1, 10);
 
         // then
-        assertEquals(0, result.size());
-        verify(orderRepository).findAll();
+        assertEquals(0, result.getTotal());
+        assertEquals(1, result.getPageNumber());
+        assertEquals(10, result.getPageSize());
+        verify(orderRepository).list(any(), any());
     }
 
     @Test
@@ -70,15 +73,17 @@ class OrderServiceTest {
                 createOrder(UUID.fromString("3a8e0e2f-587d-4b3c-b1c9-27f5d6c3627a"), customerId3, status3, List.of(orderItem4), OFFSET_DATE_TIME),
                 createOrder(UUID.fromString("4c9e7a3b-84e7-4f8e-95e2-cd2f1d56e6b7"), customerId4, status4, List.of(orderItem5), OFFSET_DATE_TIME)
         );
-        when(orderRepository.findAll()).thenReturn(orders);
+        when(orderRepository.list(any(), any())).thenReturn(Pair.of(orders, orders.size()));
 
         // when
-        final var result = orderService.findAll();
+        final var result = orderService.list(1, 20);
 
         // then
-        assertEquals(4, result.size());
-        assertEquals(orders, result);
-        verify(orderRepository).findAll();
+        assertEquals(4, result.getTotal());
+        assertEquals(1, result.getPageNumber());
+        assertEquals(20, result.getPageSize());
+        assertEquals(orders, result.getOrders());
+        verify(orderRepository).list(any(), any());
     }
 
     @Test

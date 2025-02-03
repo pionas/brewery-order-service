@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderPagedList;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderResponse;
-import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrdersResponse;
 
 import java.util.Map;
 import java.util.UUID;
@@ -30,13 +30,13 @@ class OrderRestControllerIT extends AbstractIT {
         // given
 
         // when
-        final var response = restTemplate.getForEntity(MODEL_API_URL, OrdersResponse.class);
+        final var response = restTemplate.getForEntity(MODEL_API_URL, OrderPagedList.class);
 
         // then
         assertEquals(HttpStatus.OK, response.getStatusCode());
         final var responseBody = response.getBody();
         assertNotNull(responseBody);
-        final var ordersResponse = responseBody.getOrders();
+        final var ordersResponse = responseBody.getContent();
         assertNotNull(ordersResponse);
         assertTrue(ordersResponse.isEmpty());
     }
@@ -47,13 +47,13 @@ class OrderRestControllerIT extends AbstractIT {
         // given
 
         // when
-        final var response = restTemplate.getForEntity(MODEL_API_URL, OrdersResponse.class);
+        final var response = restTemplate.getForEntity(MODEL_API_URL, OrderPagedList.class);
 
         // then
         assertEquals(HttpStatus.OK, response.getStatusCode());
         final var responseBody = response.getBody();
         assertNotNull(responseBody);
-        final var ordersResponse = responseBody.getOrders();
+        final var ordersResponse = responseBody.getContent();
         assertNotNull(ordersResponse);
         assertFalse(ordersResponse.isEmpty());
     }

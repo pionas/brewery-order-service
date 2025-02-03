@@ -1,11 +1,13 @@
 package pl.excellentapp.brewery.order.application;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import pl.excellentapp.brewery.order.domain.exception.OrderNotFoundException;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.Order;
 import pl.excellentapp.brewery.order.domain.order.OrderItem;
+import pl.excellentapp.brewery.order.domain.order.OrderPage;
 import pl.excellentapp.brewery.order.domain.order.OrderRepository;
 
 import java.util.List;
@@ -22,8 +24,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderEventPublisher orderEventPublisher;
 
     @Override
-    public List<Order> findAll() {
-        return orderRepository.findAll();
+    public OrderPage list(@NonNull Integer pageNumber, @NonNull Integer pageSize) {
+        return OrderPage.of(orderRepository.list(pageNumber, pageSize), pageNumber, pageSize);
     }
 
     @Override

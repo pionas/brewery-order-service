@@ -6,16 +6,18 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pl.excellentapp.brewery.order.application.OrderService;
 import pl.excellentapp.brewery.order.domain.exception.OrderNotFoundException;
 import pl.excellentapp.brewery.order.domain.order.Order;
+import pl.excellentapp.brewery.order.domain.order.OrderPage;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderItemRequest;
+import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderPagedList;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderRequest;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderResponse;
-import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrdersResponse;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.mapper.OrderRestMapper;
 import pl.excellentapp.brewery.order.infrastructure.rest.handler.GlobalExceptionHandler;
 import pl.excellentapp.brewery.order.utils.DateTimeProvider;
@@ -64,7 +66,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
                 .andExpect(status().isOk());
 
         // then
-        verify(orderService).findAll();
+        verify(orderService).list(any(), any());
     }
 
     @Test
@@ -72,8 +74,8 @@ class OrderRestControllerTest extends AbstractMvcTest {
         // given
         final var order1 = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"));
         final var order2 = createOrder(UUID.fromString("4a5b96de-684a-411b-9616-fddd0b06a382"));
-        when(orderService.findAll())
-                .thenReturn(List.of(order1, order2));
+        final var orderPage = OrderPage.of(Pair.of(List.of(order1, order2), 2), 1, 2);
+        when(orderService.list(any(), any())).thenReturn(orderPage);
 
         // when
         final var response = mockMvc.perform(get("/api/v1/orders"))
@@ -85,9 +87,9 @@ class OrderRestControllerTest extends AbstractMvcTest {
         assertNotNull(response);
         final var responseBody = response.getContentAsString();
         assertNotNull(responseBody);
-        final var ordersResponse = super.mapFromJson(responseBody, OrdersResponse.class);
+        final var ordersResponse = super.mapFromJson(responseBody, OrderPagedList.class);
         assertNotNull(ordersResponse);
-        final var ordersResponseList = ordersResponse.getOrders();
+        final var ordersResponseList = ordersResponse.getContent();
         assertNotNull(ordersResponseList);
         assertEquals(2, ordersResponseList.size());
         final var orderResponse1 = ordersResponseList.getFirst();
@@ -96,7 +98,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
         final var orderResponse2 = ordersResponseList.getLast();
         assertNotNull(orderResponse2);
         assertEquals(orderResponse2.getId(), order2.getId());
-        verify(orderService).findAll();
+        verify(orderService).list(any(), any());
     }
 
     @Test

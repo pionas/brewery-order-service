@@ -1,6 +1,8 @@
 package pl.excellentapp.brewery.order.infrastructure.persistence.jpa;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 import pl.excellentapp.brewery.order.domain.order.Order;
 import pl.excellentapp.brewery.order.domain.order.OrderRepository;
@@ -17,8 +19,11 @@ class JpaOrderRepository implements OrderRepository {
     private final OrderMapper orderMapper;
 
     @Override
-    public List<Order> findAll() {
-        return orderMapper.map(springJpaOrderRepository.findAll());
+    public Pair<List<Order>, Integer> list(Integer pageNumber, Integer pageSize) {
+        final var pageRequest = PageRequest.of(pageNumber, pageSize);
+        final var orderPage = springJpaOrderRepository.findAll(pageRequest);
+        List<Order> beers = orderPage.getContent().stream().map(orderMapper::map).toList();
+        return Pair.of(beers, orderPage.getTotalPages());
     }
 
     @Override

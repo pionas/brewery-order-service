@@ -11,13 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.excellentapp.brewery.order.application.OrderService;
+import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderPagedList;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderRequest;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderResponse;
-import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrdersResponse;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.mapper.OrderRestMapper;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -25,12 +27,16 @@ import java.util.UUID;
 @RequestMapping("/api/v1/orders")
 class OrderRestController {
 
+    private static final Integer DEFAULT_PAGE_NUMBER = 0;
+    private static final Integer DEFAULT_PAGE_SIZE = 25;
+
     private final OrderService orderService;
     private final OrderRestMapper orderRestMapper;
 
     @GetMapping({"", "/"})
-    public ResponseEntity<OrdersResponse> getOrders() {
-        return new ResponseEntity<>(orderRestMapper.map(orderService.findAll()), HttpStatus.OK);
+    public ResponseEntity<OrderPagedList> getOrders(@RequestParam(value = "pageNumber", required = false) Optional<Integer> pageNumber,
+                                                    @RequestParam(value = "pageSize", required = false) Optional<Integer> pageSize) {
+        return new ResponseEntity<>(orderRestMapper.map(orderService.list(pageNumber.orElse(DEFAULT_PAGE_NUMBER), pageSize.orElse(DEFAULT_PAGE_SIZE))), HttpStatus.OK);
     }
 
     @GetMapping("/{orderId}")
