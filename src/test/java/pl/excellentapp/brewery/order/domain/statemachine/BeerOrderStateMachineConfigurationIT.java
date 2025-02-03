@@ -8,7 +8,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderEvent;
-import pl.excellentapp.brewery.order.domain.order.BeerOrderManager;
+import pl.excellentapp.brewery.order.domain.order.BeerOrderManagerImpl;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.AbstractIT;
 import reactor.core.publisher.Mono;
@@ -253,7 +253,7 @@ class BeerOrderStateMachineConfigurationIT extends AbstractIT {
 
     private Message<BeerOrderEvent> getBeerOrderEventMessage(BeerOrderEvent beerOrderEvent) {
         return MessageBuilder.withPayload(beerOrderEvent)
-                .setHeader(BeerOrderManager.BEER_ORDER_ID_HEADER, "11b4e28b-2fa1-4d3b-a3f5-ef19b5a7633b")
+                .setHeader(BeerOrderManagerImpl.BEER_ORDER_ID_HEADER, "11b4e28b-2fa1-4d3b-a3f5-ef19b5a7633b")
                 .build();
     }
 }

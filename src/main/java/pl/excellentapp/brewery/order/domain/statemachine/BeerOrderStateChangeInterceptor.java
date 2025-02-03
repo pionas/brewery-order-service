@@ -28,7 +28,6 @@ class BeerOrderStateChangeInterceptor extends StateMachineInterceptorAdapter<Bee
     @Transactional
     @Override
     public void preStateChange(State<BeerOrderStatus, BeerOrderEvent> state, Message<BeerOrderEvent> message, Transition<BeerOrderStatus, BeerOrderEvent> transition, StateMachine<BeerOrderStatus, BeerOrderEvent> stateMachine, StateMachine<BeerOrderStatus, BeerOrderEvent> rootStateMachine) {
-
         Optional.ofNullable(message)
                 .map(Message::getHeaders)
                 .filter(headers -> headers.containsKey(BeerOrderManager.BEER_ORDER_ID_HEADER))
@@ -40,9 +39,6 @@ class BeerOrderStateChangeInterceptor extends StateMachineInterceptorAdapter<Bee
                     log.debug("Saving state for order id: {} Status: {}", order.getId(), state.getId());
                     order.setOrderStatus(state.getId());
                     orderRepository.save(order);
-                }, () -> {
-                    log.error("Not found Beer Order Id Header or not found Beer Order in DB when try change state for Status {}", state.getId());
-                });
-
+                }, () -> log.error("Not found Beer Order Id Header or not found Beer Order in DB when try change state for Status {}", state.getId()));
     }
 }
