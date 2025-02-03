@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
- import pl.excellentapp.brewery.common.events.Event;
-import pl.excellentapp.brewery.common.events.OrderCancelledEvent;
-import pl.excellentapp.brewery.common.events.OrderCreatedEvent;
-import pl.excellentapp.brewery.common.events.OrderPickedUpEvent;
-import pl.excellentapp.brewery.common.events.OrderAllocatedEvent;
+ import pl.excellentapp.brewery.model.events.Event;
+import pl.excellentapp.brewery.model.events.OrderCancelledEvent;
+import pl.excellentapp.brewery.model.events.OrderCreatedEvent;
+import pl.excellentapp.brewery.model.events.OrderPickedUpEvent;
+import pl.excellentapp.brewery.model.events.OrderAllocatedEvent;
 
 @Component
 @Slf4j

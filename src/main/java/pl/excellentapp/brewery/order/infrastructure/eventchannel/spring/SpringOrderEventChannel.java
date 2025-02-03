@@ -3,11 +3,11 @@ package pl.excellentapp.brewery.order.infrastructure.eventchannel.spring;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import pl.excellentapp.brewery.common.events.OrderCancelledEvent;
-import pl.excellentapp.brewery.common.events.OrderCreatedEvent;
-import pl.excellentapp.brewery.common.events.OrderEventChannel;
-import pl.excellentapp.brewery.common.events.OrderPickedUpEvent;
-import pl.excellentapp.brewery.common.events.OrderAllocatedEvent;
+import pl.excellentapp.brewery.model.events.OrderCancelledEvent;
+import pl.excellentapp.brewery.model.events.OrderCreatedEvent;
+import pl.excellentapp.brewery.model.events.OrderEventChannel;
+import pl.excellentapp.brewery.model.events.OrderPickedUpEvent;
+import pl.excellentapp.brewery.model.events.OrderAllocatedEvent;
 
 @Component
 @RequiredArgsConstructor

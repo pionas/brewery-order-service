@@ -1,4 +1,4 @@
-package pl.excellentapp.brewery.common.events;
+package pl.excellentapp.brewery.model.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,12 +10,12 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderAllocatedEvent extends Event {
+public class OrderCancelledEvent extends Event {
 
     private UUID orderId;
-    private BeerOrderStatus status = BeerOrderStatus.ALLOCATED;
+    private BeerOrderStatus status;
 
-    public OrderAllocatedEvent(UUID orderId) {
+    public OrderCancelledEvent(UUID orderId) {
         this.orderId = orderId;
     }
 }
