@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pl.excellentapp.brewery.order.application.OrderService;
 import pl.excellentapp.brewery.order.domain.exception.OrderNotFoundException;
+import pl.excellentapp.brewery.order.domain.order.BeerOrderManager;
 import pl.excellentapp.brewery.order.domain.order.Order;
 import pl.excellentapp.brewery.order.domain.order.OrderPage;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderItemRequest;
@@ -40,6 +41,9 @@ class OrderRestControllerTest extends AbstractMvcTest {
 
     @Mock
     private OrderService orderService;
+
+    @Mock
+    private BeerOrderManager orderManager;
 
     @Mock
     private DateTimeProvider dateTimeProvider;
@@ -150,7 +154,7 @@ class OrderRestControllerTest extends AbstractMvcTest {
                 .customerId(customerId)
                 .items(List.of(orderItem))
                 .build();
-        when(orderService.create(any(), any())).thenReturn(order);
+        when(orderManager.newOrder(any(), any())).thenReturn(order);
 
         // when
         final var response = mockMvc.perform(post("/api/v1/orders")

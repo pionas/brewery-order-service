@@ -29,11 +29,10 @@ class OrderServiceTest {
     private static final UUID BEER_ID_3 = UUID.fromString("354a3171-2f34-4584-ac61-e0dc1d43161e");
 
     private final OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
-    private final OrderFactory orderFactory = Mockito.mock(OrderFactory.class);
     private final OrderUpdated orderUpdated = Mockito.mock(OrderUpdated.class);
     private final OrderEventPublisher orderEventPublisher = Mockito.mock(OrderEventPublisher.class);
 
-    private final OrderService orderService = new OrderServiceImpl(orderRepository, orderFactory, orderUpdated, orderEventPublisher);
+    private final OrderService orderService = new OrderServiceImpl(orderRepository, orderUpdated, orderEventPublisher);
 
 
     @Test
@@ -118,27 +117,6 @@ class OrderServiceTest {
         // then
         assertTrue(orderOptional.isEmpty());
         verify(orderRepository).findById(orderId);
-    }
-
-    @Test
-    void shouldCreateOrder() {
-        // given
-        final var customerId = UUID.fromString("b78f9a11-cbc0-4f1c-b7c5-16e62cc25732");
-        final var orderId = UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936");
-        final var beerId = UUID.fromString("34a13d2f-b953-4b25-b529-d9f00c1ba41c");
-        final var status = BeerOrderStatus.NEW;
-        final var orderItem = new OrderItem(beerId, 1);
-        final var order = createOrder(orderId, customerId, status, List.of(orderItem), OFFSET_DATE_TIME);
-        when(orderFactory.createOrder(customerId, List.of(orderItem))).thenReturn(order);
-        when(orderRepository.save(order)).thenReturn(order);
-
-        // when
-        final var result = orderService.create(order.getCustomerId(), order.getItems());
-
-        // then
-        assertEquals(order, result);
-        verify(orderRepository).save(order);
-        verify(orderEventPublisher).publishOrderCreatedEvent(order);
     }
 
     @Test

@@ -19,7 +19,6 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderFactory orderFactory;
     private final OrderUpdated orderUpdated;
     private final OrderEventPublisher orderEventPublisher;
 
@@ -31,13 +30,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Order> findById(UUID id) {
         return orderRepository.findById(id);
-    }
-
-    @Override
-    public Order create(UUID customerId, List<OrderItem> orderItems) {
-        Order order = orderFactory.createOrder(customerId, orderItems);
-        orderEventPublisher.publishOrderCreatedEvent(order);
-        return orderRepository.save(order);
     }
 
     @Override

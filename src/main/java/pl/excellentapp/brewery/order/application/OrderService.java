@@ -15,8 +15,6 @@ public interface OrderService {
 
     Optional<Order> findById(UUID id);
 
-    Order create(UUID customerId, List<OrderItem> orderItems);
-
     Order update(UUID orderId, List<OrderItem> orderItems);
 
     void delete(UUID orderId);

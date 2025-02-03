@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.excellentapp.brewery.order.application.OrderService;
+import pl.excellentapp.brewery.order.domain.order.BeerOrderManager;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderPagedList;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderRequest;
 import pl.excellentapp.brewery.order.infrastructure.rest.api.dto.OrderResponse;
@@ -31,6 +32,7 @@ class OrderRestController {
     private static final Integer DEFAULT_PAGE_SIZE = 25;
 
     private final OrderService orderService;
+    private final BeerOrderManager beerOrderManager;
     private final OrderRestMapper orderRestMapper;
 
     @GetMapping({"", "/"})
@@ -49,7 +51,7 @@ class OrderRestController {
 
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
-        final var orderResponse = orderRestMapper.map(orderService.create(orderRequest.getCustomerId(), orderRestMapper.mapToOrderItemList(orderRequest.getItems())));
+        final var orderResponse = orderRestMapper.map(beerOrderManager.newOrder(orderRequest.getCustomerId(), orderRestMapper.mapToOrderItemList(orderRequest.getItems())));
 
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
