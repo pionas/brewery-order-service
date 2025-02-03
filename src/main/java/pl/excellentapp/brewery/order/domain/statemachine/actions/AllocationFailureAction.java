@@ -1,9 +1,11 @@
 package pl.excellentapp.brewery.order.domain.statemachine.actions;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.statemachine.StateContext;
 import org.springframework.stereotype.Component;
+import pl.excellentapp.brewery.model.events.OrderAllocationFailureEvent;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderEvent;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderManager;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
@@ -13,10 +15,17 @@ import java.util.UUID;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 class AllocationFailureAction extends AbstractAction {
 
     private final OrderRepository beerOrderRepository;
+    private final JmsTemplate jmsTemplate;
+    private final String allocateFailureOrderQueueName;
+
+    public AllocationFailureAction(OrderRepository beerOrderRepository, JmsTemplate jmsTemplate, @Value("${queue.order.allocate-failure}") String allocateFailureOrderQueueName) {
+        this.beerOrderRepository = beerOrderRepository;
+        this.jmsTemplate = jmsTemplate;
+        this.allocateFailureOrderQueueName = allocateFailureOrderQueueName;
+    }
 
     @Override
     public void execute(StateContext<BeerOrderStatus, BeerOrderEvent> context) {
@@ -24,8 +33,8 @@ class AllocationFailureAction extends AbstractAction {
 
         beerOrderRepository.findById(UUID.fromString(beerOrderId))
                 .ifPresentOrElse(beerOrder -> {
-                    // TODO
                     log.error("Sent Allocation Failure Message to queue for order id {}", beerOrderId);
+                    jmsTemplate.convertAndSend(allocateFailureOrderQueueName, new OrderAllocationFailureEvent(beerOrder.getId()));
                 }, () -> log.error("Beer Order Not Found!"));
     }
 }

@@ -22,6 +22,11 @@ queue:
   notification:
     email: beer-notification-send-email
     sms: beer-notification-send-sms
+  order:
+    validate: beer-order-validate
+    allocate: beer-order-allocate
+    allocate-failure: beer-order-allocate-failure
+    deallocate: beer-order-deallocate
 
 http-client:
   max-total: 50
