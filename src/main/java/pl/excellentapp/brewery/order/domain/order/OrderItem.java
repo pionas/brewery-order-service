@@ -50,4 +50,8 @@ public class OrderItem {
     public boolean isNotFullyReserved() {
         return !Objects.equals(orderedQuantity, reservedQuantity);
     }
+
+    public boolean containsId(UUID beerId) {
+        return Objects.equals(this.beerId, beerId);
+    }
 }

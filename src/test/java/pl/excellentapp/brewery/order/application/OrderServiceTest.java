@@ -24,15 +24,11 @@ class OrderServiceTest {
 
     private static final OffsetDateTime OFFSET_DATE_TIME = OffsetDateTime.of(2025, 1, 23, 12, 7, 0, 0, ZoneOffset.UTC);
     private static final UUID CUSTOMER_ID = UUID.fromString("4c2ed01e-a2da-4d6b-be10-3c6b10b6a8b4");
-    private static final UUID BEER_ID_1 = UUID.fromString("82159174-2449-47b0-aa7f-fa33f8515fad");
-    private static final UUID BEER_ID_2 = UUID.fromString("0c99c16c-822e-4495-9bf0-d6f59f3daf12");
-    private static final UUID BEER_ID_3 = UUID.fromString("354a3171-2f34-4584-ac61-e0dc1d43161e");
 
     private final OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
-    private final OrderUpdated orderUpdated = Mockito.mock(OrderUpdated.class);
     private final OrderEventPublisher orderEventPublisher = Mockito.mock(OrderEventPublisher.class);
 
-    private final OrderService orderService = new OrderServiceImpl(orderRepository, orderUpdated, orderEventPublisher);
+    private final OrderService orderService = new OrderServiceImpl(orderRepository, orderEventPublisher);
 
 
     @Test
@@ -117,52 +113,6 @@ class OrderServiceTest {
         // then
         assertTrue(orderOptional.isEmpty());
         verify(orderRepository).findById(orderId);
-    }
-
-    @Test
-    void shouldUpdateOrderWithoutProduceReadyEvent() {
-        // given
-        final var status = BeerOrderStatus.NEW;
-        final var item1 = getOrderItem(BEER_ID_1, 11, BigDecimal.valueOf(3.33), 11);
-        final var item2 = getOrderItem(BEER_ID_2, 3, BigDecimal.valueOf(4.44), 3);
-        final var item3 = getOrderItem(BEER_ID_3, 2, BigDecimal.valueOf(5.55), 2);
-        final var originalOrder = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), CUSTOMER_ID, status, List.of(item1), OFFSET_DATE_TIME);
-
-        when(orderRepository.findById(originalOrder.getId())).thenReturn(Optional.of(originalOrder));
-        when(orderUpdated.update(any(Order.class), any())).thenReturn(originalOrder);
-        when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // when
-        final var result = orderService.update(originalOrder.getId(), List.of(item1, item2, item3));
-
-        // then
-        assertEquals(originalOrder, result);
-        verify(orderRepository).findById(originalOrder.getId());
-        verify(orderRepository).save(originalOrder);
-        verify(orderEventPublisher, never()).publishOrderReadyEvent(originalOrder);
-    }
-
-    @Test
-    void shouldUpdateOrderAndProduceReadyEvent() {
-        // given
-        final var status = BeerOrderStatus.ALLOCATED;
-        final var item1 = getOrderItem(BEER_ID_1, 11, BigDecimal.valueOf(3.33), 11);
-        final var item2 = getOrderItem(BEER_ID_2, 3, BigDecimal.valueOf(4.44), 3);
-        final var item3 = getOrderItem(BEER_ID_3, 2, BigDecimal.valueOf(5.55), 2);
-        final var originalOrder = createOrder(UUID.fromString("71737f0e-11eb-4775-b8b4-ce945fdee936"), CUSTOMER_ID, status, List.of(item1), OFFSET_DATE_TIME);
-
-        when(orderRepository.findById(originalOrder.getId())).thenReturn(Optional.of(originalOrder));
-        when(orderUpdated.update(any(Order.class), any())).thenReturn(originalOrder);
-        when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // when
-        final var result = orderService.update(originalOrder.getId(), List.of(item1, item2, item3));
-
-        // then
-        assertEquals(originalOrder, result);
-        verify(orderRepository).findById(originalOrder.getId());
-        verify(orderRepository).save(originalOrder);
-        verify(orderEventPublisher).publishOrderReadyEvent(originalOrder);
     }
 
     @Test

@@ -1,7 +1,6 @@
 package pl.excellentapp.brewery.order.application;
 
 import lombok.RequiredArgsConstructor;
-import pl.excellentapp.brewery.model.events.OrderAllocatedEvent;
 import pl.excellentapp.brewery.model.events.OrderCancelledEvent;
 import pl.excellentapp.brewery.model.events.OrderCreatedEvent;
 import pl.excellentapp.brewery.model.events.OrderEventChannel;
@@ -35,9 +34,4 @@ public class OrderEventPublisher {
         );
     }
 
-    public void publishOrderReadyEvent(Order order) {
-        eventChannel.publish(
-                new OrderAllocatedEvent(order.getId())
-        );
-    }
 }

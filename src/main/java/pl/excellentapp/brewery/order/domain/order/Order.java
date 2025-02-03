@@ -48,4 +48,13 @@ public class Order {
                 .map(OrderItem::calculateTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    public void reserve(UUID beerId, Integer stock) {
+        items.stream()
+                .filter(orderItem -> orderItem.containsId(beerId))
+                .findAny()
+                .ifPresent(orderItem -> orderItem.reserve(stock));
+        initStatus();
+        calculateTotalPrice();
+    }
 }

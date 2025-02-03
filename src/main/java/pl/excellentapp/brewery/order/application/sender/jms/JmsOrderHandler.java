@@ -9,7 +9,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 import pl.excellentapp.brewery.model.events.Event;
-import pl.excellentapp.brewery.model.events.OrderAllocatedEvent;
 import pl.excellentapp.brewery.model.events.OrderCancelledEvent;
 import pl.excellentapp.brewery.model.events.OrderCreatedEvent;
 import pl.excellentapp.brewery.model.events.OrderPickedUpEvent;
@@ -42,13 +41,6 @@ class JmsOrderHandler {
 
     @EventListener
     public void publish(OrderCreatedEvent event) {
-        sendAndWaitForAnswer(jmsReserveStockQueueName, event); // TODO: create reserve stock for beer event
-        sendAndWaitForAnswer(jmsNotificationEmailQueueName, event); // TODO: create email notification for customer
-        sendAndWaitForAnswer(jmsNotificationSmsQueueName, event); // TODO: create sms notification for customer
-    }
-
-    @EventListener
-    public void publish(OrderAllocatedEvent event) {
         sendAndWaitForAnswer(jmsReserveStockQueueName, event); // TODO: create reserve stock for beer event
         sendAndWaitForAnswer(jmsNotificationEmailQueueName, event); // TODO: create email notification for customer
         sendAndWaitForAnswer(jmsNotificationSmsQueueName, event); // TODO: create sms notification for customer

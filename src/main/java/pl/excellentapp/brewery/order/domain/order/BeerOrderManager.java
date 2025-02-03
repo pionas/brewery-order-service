@@ -11,13 +11,12 @@ public interface BeerOrderManager {
 
     void processValidationResult(UUID beerOrderId, Boolean isValid);
 
-    void orderAllocationPassed(Order beerOrder);
+    void orderAllocationPassed(UUID orderId, UUID beerId, Integer stock);
 
-    void orderAllocationPendingInventory(Order beerOrder);
-
-    void orderAllocationFailed(Order beerOrder);
+    void orderAllocationFailed(UUID orderId, UUID beerId);
 
     void orderPickedUp(UUID id);
 
     void cancel(UUID id);
+
 }

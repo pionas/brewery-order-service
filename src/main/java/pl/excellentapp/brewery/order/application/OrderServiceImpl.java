@@ -6,11 +6,9 @@ import org.springframework.stereotype.Service;
 import pl.excellentapp.brewery.order.domain.exception.OrderNotFoundException;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.Order;
-import pl.excellentapp.brewery.order.domain.order.OrderItem;
 import pl.excellentapp.brewery.order.domain.order.OrderPage;
 import pl.excellentapp.brewery.order.domain.order.OrderRepository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,7 +17,6 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderUpdated orderUpdated;
     private final OrderEventPublisher orderEventPublisher;
 
     @Override
@@ -30,15 +27,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Order> findById(UUID id) {
         return orderRepository.findById(id);
-    }
-
-    @Override
-    public Order update(UUID orderId, List<OrderItem> orderItems) {
-        final var order = orderUpdated.update(getOrderById(orderId), orderItems);
-        if (order.isReady()) {
-            orderEventPublisher.publishOrderReadyEvent(order);
-        }
-        return orderRepository.save(order);
     }
 
     @Override

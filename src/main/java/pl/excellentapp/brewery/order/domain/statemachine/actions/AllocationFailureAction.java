@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.statemachine.StateContext;
 import org.springframework.stereotype.Component;
-import pl.excellentapp.brewery.model.events.OrderAllocationFailureEvent;
+import pl.excellentapp.brewery.model.events.BeerInventoryEvent;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderEvent;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderManager;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
+import pl.excellentapp.brewery.order.domain.order.Order;
+import pl.excellentapp.brewery.order.domain.order.OrderItem;
 import pl.excellentapp.brewery.order.domain.order.OrderRepository;
 
 import java.util.UUID;
@@ -34,7 +36,16 @@ class AllocationFailureAction extends AbstractAction {
         beerOrderRepository.findById(UUID.fromString(beerOrderId))
                 .ifPresentOrElse(beerOrder -> {
                     log.error("Sent Allocation Failure Message to queue for order id {}", beerOrderId);
-                    jmsTemplate.convertAndSend(allocateFailureOrderQueueName, new OrderAllocationFailureEvent(beerOrder.getId()));
+                    changeBeersStock(beerOrder);
                 }, () -> log.error("Beer Order Not Found!"));
+    }
+
+    private void changeBeersStock(Order beerOrder) {
+        beerOrder.getItems()
+                .forEach(orderItem -> changeBeerStock(beerOrder.getId(), orderItem));
+    }
+
+    private void changeBeerStock(UUID orderId, OrderItem orderItem) {
+        jmsTemplate.convertAndSend(allocateFailureOrderQueueName, new BeerInventoryEvent(orderId, orderItem.getBeerId(), orderItem.getReservedQuantity()));
     }
 }

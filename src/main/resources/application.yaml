@@ -19,14 +19,15 @@ queue:
   inventory:
     reserve-stock: beer-inventory-reserve-stock
     release-stock: beer-inventory-release-stock
+    allocate-response: beer-order-allocate-response
   notification:
     email: beer-notification-send-email
     sms: beer-notification-send-sms
   order:
     validate: beer-order-validate
-    allocate: beer-order-allocate
-    allocate-failure: beer-order-allocate-failure
-    deallocate: beer-order-deallocate
+    allocate: beer-inventory-reserve-stock
+    allocate-failure: beer-inventory-release-stock
+    deallocate: beer-inventory-release-stock
 
 http-client:
   max-total: 50

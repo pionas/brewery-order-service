@@ -8,4 +8,5 @@ import java.util.List;
 public interface OrderUpdated {
 
     Order update(Order order, List<OrderItem> orderItems);
+
 }

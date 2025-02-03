@@ -57,36 +57,29 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     }
 
     @Override
-    public void orderAllocationPassed(Order beerOrderDto) {
-        beerOrderRepository.findById(beerOrderDto.getId())
+    public void orderAllocationPassed(UUID orderId, UUID beerId, Integer stock) {
+        beerOrderRepository.findById(orderId)
                 .ifPresentOrElse(
                         beerOrder -> {
-                            sendOrderEvent(beerOrder, BeerOrderEvent.ALLOCATION_SUCCESS);
-                            awaitForStatus(beerOrder.getId(), BeerOrderStatus.ALLOCATED);
-                            updateAllocatedQty(beerOrderDto);
+                            beerOrder.reserve(beerId, stock);
+                            if (beerOrder.isReady()) {
+                                sendOrderEvent(beerOrder, BeerOrderEvent.ALLOCATION_SUCCESS);
+                                awaitForStatus(beerOrder.getId(), BeerOrderStatus.ALLOCATED);
+                            } else {
+                                sendOrderEvent(beerOrder, BeerOrderEvent.ALLOCATION_NO_INVENTORY);
+                                awaitForStatus(beerOrder.getId(), BeerOrderStatus.PENDING_INVENTORY);
+                            }
+                            beerOrderRepository.save(beerOrder);
                         },
-                        () -> logOrderNotFound(beerOrderDto.getId())
+                        () -> logOrderNotFound(beerId)
                 );
     }
 
     @Override
-    public void orderAllocationPendingInventory(Order beerOrderDto) {
-        beerOrderRepository.findById(beerOrderDto.getId())
-                .ifPresentOrElse(
-                        beerOrder -> {
-                            sendOrderEvent(beerOrder, BeerOrderEvent.ALLOCATION_NO_INVENTORY);
-                            awaitForStatus(beerOrder.getId(), BeerOrderStatus.PENDING_INVENTORY);
-                            updateAllocatedQty(beerOrderDto);
-                        },
-                        () -> logOrderNotFound(beerOrderDto.getId())
-                );
-    }
-
-    @Override
-    public void orderAllocationFailed(Order beerOrderDto) {
-        beerOrderRepository.findById(beerOrderDto.getId()).ifPresentOrElse(
+    public void orderAllocationFailed(UUID orderId, UUID beerId) {
+        beerOrderRepository.findById(beerId).ifPresentOrElse(
                 beerOrder -> sendOrderEvent(beerOrder, BeerOrderEvent.ALLOCATION_FAILED),
-                () -> logOrderNotFound(beerOrderDto.getId())
+                () -> logOrderNotFound(beerId)
         );
     }
 
@@ -159,18 +152,6 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
                 .then(stateMachine.startReactively())
                 .thenReturn(stateMachine)
                 .block();
-    }
-
-    private void updateAllocatedQty(Order beerOrderDto) {
-        beerOrderRepository.findById(beerOrderDto.getId())
-                .ifPresentOrElse(
-                        beerOrder -> {
-                            // TODO: update quantity allocated
-//                            beerOrder.
-                            beerOrderRepository.save(beerOrder);
-                        },
-                        () -> logOrderNotFound(beerOrderDto.getId())
-                );
     }
 
     private void logOrderNotFound(UUID beerOrderId) {
