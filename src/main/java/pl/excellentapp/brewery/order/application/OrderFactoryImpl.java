@@ -32,6 +32,7 @@ class OrderFactoryImpl implements OrderFactory {
             throw new IllegalArgumentException("Order items cannot be empty");
         }
         Order order = new Order();
+        order.setVersion(1L);
         order.setId(modelIdProvider.random());
         order.setCustomerId(customerId);
         order.setOrderDateTime(dateTimeProvider.now());
