@@ -3,3 +3,34 @@ spring:
     name: brewery-order-service
   datasource:
     url: jdbc:h2:mem:brewery-order-service-test;MODE=MYSQL
+
+queue:
+  inventory:
+    reserve-stock: beer-inventory-reserve-stock
+    release-stock: beer-inventory-release-stock
+    allocate-response: beer-order-allocate-response
+  notification:
+    email: beer-notification-send-email
+    sms: beer-notification-send-sms
+  order:
+    validate: beer-order-validate
+    allocate: beer-inventory-reserve-stock
+    allocate-failure: beer-inventory-release-stock
+    deallocate: beer-inventory-release-stock
+
+http-client:
+  max-total: 50
+  max-per-route: 20
+  socket-timeout: PT5S
+  idle-timeout: PT60S
+  keep-alive-time: PT5S
+
+rest:
+  inventory:
+    service: "http://localhost:8888/api/v1/inventories/"
+  beer:
+    service: "http://localhost:8888/api/v1/beers/"
+
+local:
+  server:
+    port: 8000
