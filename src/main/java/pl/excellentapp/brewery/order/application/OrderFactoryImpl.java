@@ -11,7 +11,6 @@ import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventoryService;
 import pl.excellentapp.brewery.order.domain.order.Order;
 import pl.excellentapp.brewery.order.domain.order.OrderItem;
 import pl.excellentapp.brewery.order.utils.DateTimeProvider;
-import pl.excellentapp.brewery.order.utils.ModelIdProvider;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +23,6 @@ class OrderFactoryImpl implements OrderFactory {
 
     private final BeerInventoryService beerInventoryService;
     private final DateTimeProvider dateTimeProvider;
-    private final ModelIdProvider modelIdProvider;
 
     @Override
     public Order createOrder(@NonNull UUID customerId, @NonNull List<OrderItem> orderItems) {
@@ -33,7 +31,7 @@ class OrderFactoryImpl implements OrderFactory {
         }
         Order order = new Order();
         order.setVersion(1L);
-        order.setId(modelIdProvider.random());
+        order.setId(null);
         order.setCustomerId(customerId);
         order.setOrderDateTime(dateTimeProvider.now());
         for (OrderItem item : orderItems) {

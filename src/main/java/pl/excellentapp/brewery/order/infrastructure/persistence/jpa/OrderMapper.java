@@ -1,7 +1,9 @@
 package pl.excellentapp.brewery.order.infrastructure.persistence.jpa;
 
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import pl.excellentapp.brewery.order.domain.order.Order;
 import pl.excellentapp.brewery.order.domain.order.OrderItem;
 
@@ -34,4 +36,12 @@ interface OrderMapper {
         return value == null ? null : value.toInstant()
                 .atOffset(OffsetDateTime.now().getOffset());
     }
+
+    @AfterMapping
+    default void setOrderForItems(@MappingTarget OrderEntity orderEntity, Order order) {
+        if (orderEntity.getItems() != null) {
+            orderEntity.getItems().forEach(item -> item.setOrder(orderEntity));
+        }
+    }
+
 }

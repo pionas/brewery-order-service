@@ -8,7 +8,6 @@ import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventoryService;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.OrderItem;
 import pl.excellentapp.brewery.order.utils.DateTimeProvider;
-import pl.excellentapp.brewery.order.utils.ModelIdProvider;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -30,14 +29,12 @@ class OrderFactoryTest {
 
     private final BeerInventoryService beerInventoryService = Mockito.mock(BeerInventoryService.class);
     private final DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
-    private final ModelIdProvider modelIdProvider = Mockito.mock(ModelIdProvider.class);
 
-    private final OrderFactory orderFactory = new OrderFactoryImpl(beerInventoryService, dateTimeProvider, modelIdProvider);
+    private final OrderFactory orderFactory = new OrderFactoryImpl(beerInventoryService, dateTimeProvider);
 
     @BeforeEach
     void setUp() {
         when(dateTimeProvider.now()).thenReturn(OFFSET_DATE_TIME);
-        when(modelIdProvider.random()).thenReturn(ORDER_ID);
     }
 
     @Test
@@ -52,7 +49,6 @@ class OrderFactoryTest {
         assertEquals("Order items cannot be empty", exception.getMessage());
         verify(beerInventoryService, never()).getInventory(any());
         verify(dateTimeProvider, never()).now();
-        verify(modelIdProvider, never()).random();
     }
 
     @Test
