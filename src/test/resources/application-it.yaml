@@ -3,6 +3,9 @@ spring:
     name: brewery-order-service
   datasource:
     url: jdbc:h2:mem:brewery-order-service-test;MODE=MYSQL
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
 
 queue:
   inventory:
@@ -30,7 +33,13 @@ rest:
     service: "http://localhost:8888/api/v1/inventories/"
   beer:
     service: "http://localhost:8888/api/v1/beers/"
+  customer:
+    service: "http://localhost:8888/api/v1/customers/"
 
 local:
   server:
     port: 8000
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace

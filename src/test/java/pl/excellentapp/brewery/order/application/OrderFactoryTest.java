@@ -3,6 +3,8 @@ package pl.excellentapp.brewery.order.application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import pl.excellentapp.brewery.order.domain.beercustomer.BeerCustomer;
+import pl.excellentapp.brewery.order.domain.beercustomer.BeerCustomerService;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventory;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventoryService;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
@@ -14,6 +16,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,9 +31,10 @@ class OrderFactoryTest {
     private static final UUID BEER_ID_2 = UUID.fromString("0c99c16c-822e-4495-9bf0-d6f59f3daf12");
 
     private final BeerInventoryService beerInventoryService = Mockito.mock(BeerInventoryService.class);
+    private final BeerCustomerService beerCustomerService = Mockito.mock(BeerCustomerService.class);
     private final DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
 
-    private final OrderFactory orderFactory = new OrderFactoryImpl(beerInventoryService, dateTimeProvider);
+    private final OrderFactory orderFactory = new OrderFactoryImpl(beerInventoryService, beerCustomerService, dateTimeProvider);
 
     @BeforeEach
     void setUp() {
@@ -52,6 +56,23 @@ class OrderFactoryTest {
     }
 
     @Test
+    void testCreateOrderWithExceptionWhenCustomerNotExists() {
+        // given
+        final var beerInventory1 = new BeerInventory(BEER_ID_1, "Beer1", 2, BigDecimal.valueOf(5));
+        final var item1 = new OrderItem(beerInventory1.getId(), 3);
+        when(beerCustomerService.getCustomer(CUSTOMER_ID)).thenReturn(Optional.empty());
+
+        // when
+        final var exception = assertThrows(RuntimeException.class, () -> orderFactory.createOrder(CUSTOMER_ID, List.of(item1)));
+
+        // then
+        assertNotNull(exception);
+        assertEquals(String.format("Customer %s not found", CUSTOMER_ID), exception.getMessage());
+        verify(beerInventoryService, never()).getInventory(any());
+        verify(dateTimeProvider, never()).now();
+    }
+
+    @Test
     void testCreateOrderWithSufficientInventory() {
         // given
         final var beerInventory1 = new BeerInventory(BEER_ID_1, "Beer1", 15, BigDecimal.valueOf(9.99));
@@ -60,13 +81,14 @@ class OrderFactoryTest {
         final var item2 = new OrderItem(beerInventory2.getId(), 3);
         when(beerInventoryService.getInventory(item1.getBeerId())).thenReturn(beerInventory1);
         when(beerInventoryService.getInventory(item2.getBeerId())).thenReturn(beerInventory2);
+        when(beerCustomerService.getCustomer(CUSTOMER_ID)).thenReturn(Optional.of(createCustomer()));
 
         // when
         final var order = orderFactory.createOrder(CUSTOMER_ID, Arrays.asList(item1, item2));
 
         // then
         assertNotNull(order);
-        assertEquals(ORDER_ID, order.getId());
+        assertNull(order.getId());
         assertEquals(CUSTOMER_ID, order.getCustomerId());
         assertEquals(OFFSET_DATE_TIME, order.getOrderDateTime());
         assertEquals(BigDecimal.valueOf(124.86), order.getTotalPrice());
@@ -96,13 +118,14 @@ class OrderFactoryTest {
         final var item2 = new OrderItem(beerInventory2.getId(), 1);
         when(beerInventoryService.getInventory(item1.getBeerId())).thenReturn(beerInventory1);
         when(beerInventoryService.getInventory(item2.getBeerId())).thenReturn(beerInventory2);
+        when(beerCustomerService.getCustomer(CUSTOMER_ID)).thenReturn(Optional.of(createCustomer()));
 
         // when
         final var order = orderFactory.createOrder(CUSTOMER_ID, List.of(item1, item2));
 
         // then
         assertNotNull(order);
-        assertEquals(ORDER_ID, order.getId());
+        assertNull(order.getId());
         assertEquals(CUSTOMER_ID, order.getCustomerId());
         assertEquals(OFFSET_DATE_TIME, order.getOrderDateTime());
         assertEquals(BigDecimal.valueOf(25), order.getTotalPrice());
@@ -132,13 +155,14 @@ class OrderFactoryTest {
         final var item2 = new OrderItem(beerInventory2.getId(), 6);
         when(beerInventoryService.getInventory(item1.getBeerId())).thenReturn(beerInventory1);
         when(beerInventoryService.getInventory(item2.getBeerId())).thenReturn(beerInventory2);
+        when(beerCustomerService.getCustomer(CUSTOMER_ID)).thenReturn(Optional.of(createCustomer()));
 
         // when
         final var order = orderFactory.createOrder(CUSTOMER_ID, Arrays.asList(item1, item2));
 
         // then
         assertNotNull(order);
-        assertEquals(ORDER_ID, order.getId());
+        assertNull(order.getId());
         assertEquals(CUSTOMER_ID, order.getCustomerId());
         assertEquals(OFFSET_DATE_TIME, order.getOrderDateTime());
         assertEquals(BigDecimal.valueOf(85), order.getTotalPrice());
@@ -157,6 +181,12 @@ class OrderFactoryTest {
         assertEquals(beerInventory2.getOnHand(), orderItem2.getReservedQuantity());
         assertEquals(beerInventory2.getPrice(), orderItem2.getPrice());
         assertFalse(orderItem2.isFullyReserved());
+    }
+
+    private BeerCustomer createCustomer() {
+        return BeerCustomer.builder()
+                .id(CUSTOMER_ID)
+                .build();
     }
 
 }

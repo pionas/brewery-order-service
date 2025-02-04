@@ -6,6 +6,7 @@ import lombok.experimental.ExtensionMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import pl.excellentapp.brewery.order.domain.beercustomer.BeerCustomerService;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventory;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventoryService;
 import pl.excellentapp.brewery.order.domain.order.Order;
@@ -22,12 +23,16 @@ import java.util.UUID;
 class OrderFactoryImpl implements OrderFactory {
 
     private final BeerInventoryService beerInventoryService;
+    private final BeerCustomerService beerCustomerService;
     private final DateTimeProvider dateTimeProvider;
 
     @Override
     public Order createOrder(@NonNull UUID customerId, @NonNull List<OrderItem> orderItems) {
         if (orderItems.isEmpty()) {
             throw new IllegalArgumentException("Order items cannot be empty");
+        }
+        if (beerCustomerService.getCustomer(customerId).isEmpty()) {
+            throw new RuntimeException(String.format("Customer %s not found", customerId));
         }
         Order order = new Order();
         order.setVersion(1L);
