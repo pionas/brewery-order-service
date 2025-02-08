@@ -1,5 +1,6 @@
 package pl.excellentapp.brewery.order.infrastructure.rest.api;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -10,7 +11,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 @TestConfiguration
 class RestTemplateConfiguration {
 
-    @LocalServerPort
+    @Value("${server.port}")
     int localServerPort;
 
     @Bean

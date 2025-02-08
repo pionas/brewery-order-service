@@ -117,7 +117,7 @@ public class BeerOrderStateMachineConfiguration extends StateMachineConfigurerAd
         StateMachineListenerAdapter<BeerOrderStatus, BeerOrderEvent> adapter = new StateMachineListenerAdapter<>() {
             @Override
             public void stateChanged(State<BeerOrderStatus, BeerOrderEvent> from, State<BeerOrderStatus, BeerOrderEvent> to) {
-                log.info("stateChanged(from: {}, to: {})", from, to);
+                log.info("stateChanged(from: {}, to: {})", from.getId(), to.getId());
             }
         };
         config.withConfiguration()

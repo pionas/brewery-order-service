@@ -40,7 +40,10 @@ interface OrderMapper {
     @AfterMapping
     default void setOrderForItems(@MappingTarget OrderEntity orderEntity, Order order) {
         if (orderEntity.getItems() != null) {
-            orderEntity.getItems().forEach(item -> item.setOrder(orderEntity));
+            orderEntity.getItems().forEach(item -> {
+                item.setOrder(orderEntity);
+                item.getId().setOrderId(orderEntity.getId());
+            });
         }
     }
 

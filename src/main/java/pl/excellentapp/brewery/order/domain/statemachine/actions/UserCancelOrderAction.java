@@ -10,7 +10,6 @@ import pl.excellentapp.brewery.order.domain.order.BeerOrderEvent;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderManager;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.Order;
-import pl.excellentapp.brewery.order.domain.order.OrderItem;
 import pl.excellentapp.brewery.order.domain.order.OrderRepository;
 
 import java.util.UUID;
@@ -23,7 +22,7 @@ public class UserCancelOrderAction extends AbstractAction {
     private final JmsTemplate jmsTemplate;
     private final String deallocateOrderQueueName;
 
-    public UserCancelOrderAction(OrderRepository beerOrderRepository, JmsTemplate jmsTemplate, @Value("${queue.order.deallocate}") String deallocateOrderQueueName) {
+    public UserCancelOrderAction(OrderRepository beerOrderRepository, JmsTemplate jmsTemplate, @Value("${queue.inventory.deallocate-stock}") String deallocateOrderQueueName) {
         this.beerOrderRepository = beerOrderRepository;
         this.jmsTemplate = jmsTemplate;
         this.deallocateOrderQueueName = deallocateOrderQueueName;
@@ -42,11 +41,6 @@ public class UserCancelOrderAction extends AbstractAction {
     }
 
     private void changeBeersStock(Order beerOrder) {
-        beerOrder.getItems()
-                .forEach(orderItem -> changeBeerStock(beerOrder.getId(), orderItem));
-    }
-
-    private void changeBeerStock(UUID orderId, OrderItem orderItem) {
-        jmsTemplate.convertAndSend(deallocateOrderQueueName, new BeerInventoryEvent(orderId, orderItem.getBeerId(), orderItem.getReservedQuantity()));
+        jmsTemplate.convertAndSend(deallocateOrderQueueName, new BeerInventoryEvent(beerOrder));
     }
 }

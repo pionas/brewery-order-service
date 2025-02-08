@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@Import({RestTemplateConfiguration.class})
+@Import({RestTemplateConfiguration.class, ExternalServicesRestConfiguration.class})
 @ActiveProfiles("it")
 public abstract class AbstractIT {
 

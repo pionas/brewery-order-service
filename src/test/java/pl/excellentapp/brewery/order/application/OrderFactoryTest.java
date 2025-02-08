@@ -92,7 +92,7 @@ class OrderFactoryTest {
         assertEquals(CUSTOMER_ID, order.getCustomerId());
         assertEquals(OFFSET_DATE_TIME, order.getOrderDateTime());
         assertEquals(BigDecimal.valueOf(124.86), order.getTotalPrice());
-        assertEquals(BeerOrderStatus.ALLOCATED, order.getOrderStatus());
+        assertEquals(BeerOrderStatus.NEW, order.getOrderStatus());
         List<OrderItem> orderItems = order.getItems();
         assertEquals(2, orderItems.size());
         OrderItem orderItem1 = orderItems.getFirst();

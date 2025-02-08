@@ -10,7 +10,6 @@ import pl.excellentapp.brewery.order.domain.order.BeerOrderEvent;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderManager;
 import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.Order;
-import pl.excellentapp.brewery.order.domain.order.OrderItem;
 import pl.excellentapp.brewery.order.domain.order.OrderRepository;
 
 import java.util.UUID;
@@ -23,7 +22,7 @@ class AllocateOrderAction extends AbstractAction {
     private final JmsTemplate jmsTemplate;
     private final String allocateOrderQueueName;
 
-    public AllocateOrderAction(OrderRepository beerOrderRepository, JmsTemplate jmsTemplate, @Value("${queue.order.allocate}") String allocateOrderQueueName) {
+    public AllocateOrderAction(OrderRepository beerOrderRepository, JmsTemplate jmsTemplate, @Value("${queue.inventory.allocate-stock}") String allocateOrderQueueName) {
         this.beerOrderRepository = beerOrderRepository;
         this.jmsTemplate = jmsTemplate;
         this.allocateOrderQueueName = allocateOrderQueueName;
@@ -41,11 +40,6 @@ class AllocateOrderAction extends AbstractAction {
     }
 
     private void changeBeersStock(Order beerOrder) {
-        beerOrder.getItems()
-                .forEach(orderItem -> changeBeerStock(beerOrder.getId(), orderItem));
-    }
-
-    private void changeBeerStock(UUID orderId, OrderItem orderItem) {
-        jmsTemplate.convertAndSend(allocateOrderQueueName, new BeerInventoryEvent(orderId, orderItem.getBeerId(), orderItem.getReservedQuantity()));
+        jmsTemplate.convertAndSend(allocateOrderQueueName, new BeerInventoryEvent(beerOrder));
     }
 }

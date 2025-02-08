@@ -26,8 +26,8 @@ class JmsOrderHandler {
 
     JmsOrderHandler(JmsTemplate jmsTemplate,
                     ObjectMapper objectMapper,
-                    @Value("${queue.inventory.reserve-stock}") String jmsReserveStockQueueName,
-                    @Value("${queue.inventory.release-stock}") String jmsReleaseStockQueueName,
+                    @Value("${queue.inventory.allocate-stock}") String jmsReserveStockQueueName,
+                    @Value("${queue.inventory.allocate-failure}") String jmsReleaseStockQueueName,
                     @Value("${queue.notification.email}") String jmsNotificationEmailQueueName,
                     @Value("${queue.notification.sms}") String jmsNotificationSmsQueueName
     ) {

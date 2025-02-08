@@ -1,6 +1,7 @@
 package pl.excellentapp.brewery.order.domain.order;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface BeerOrderManager {
@@ -11,9 +12,9 @@ public interface BeerOrderManager {
 
     void processValidationResult(UUID beerOrderId, Boolean isValid);
 
-    void orderAllocationPassed(UUID orderId, UUID beerId, Integer stock);
+    void orderAllocationPassed(UUID orderId, Map<UUID, Integer> beers);
 
-    void orderAllocationFailed(UUID orderId, UUID beerId);
+    void orderAllocationFailed(UUID orderId, Map<UUID, Integer> beers);
 
     void orderPickedUp(UUID id);
 

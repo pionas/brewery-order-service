@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import pl.excellentapp.brewery.order.domain.order.Order;
 import pl.excellentapp.brewery.order.domain.order.OrderRepository;
 
@@ -28,11 +29,12 @@ class JpaOrderRepository implements OrderRepository {
 
     @Override
     public Order save(Order order) {
-        return orderMapper.map(springJpaOrderRepository.save(orderMapper.map(order)));
+        return orderMapper.map(springJpaOrderRepository.saveAndFlush(orderMapper.map(order)));
     }
 
     @Override
-    public Optional<Order> findById(UUID id) {
+    @Transactional
+    public synchronized Optional<Order> findById(UUID id) {
         return springJpaOrderRepository.findById(id)
                 .map(orderMapper::map);
     }

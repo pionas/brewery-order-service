@@ -9,6 +9,7 @@ import org.springframework.util.CollectionUtils;
 import pl.excellentapp.brewery.order.domain.beercustomer.BeerCustomerService;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventory;
 import pl.excellentapp.brewery.order.domain.beerinventory.BeerInventoryService;
+import pl.excellentapp.brewery.order.domain.order.BeerOrderStatus;
 import pl.excellentapp.brewery.order.domain.order.Order;
 import pl.excellentapp.brewery.order.domain.order.OrderItem;
 import pl.excellentapp.brewery.order.utils.DateTimeProvider;
@@ -49,7 +50,7 @@ class OrderFactoryImpl implements OrderFactory {
         }
         order.setItems(orderItems);
         order.calculateTotalPrice();
-        order.initStatus();
+        order.setOrderStatus(BeerOrderStatus.NEW);
         return order;
     }
 }

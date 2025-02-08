@@ -17,17 +17,16 @@ spring:
 
 queue:
   inventory:
-    reserve-stock: beer-inventory-reserve-stock
-    release-stock: beer-inventory-release-stock
-    allocate-response: beer-order-allocate-response
+    allocate-stock: beer-inventory-allocate-stock
+    deallocate-stock: beer-inventory-deallocate-stock
+    allocate-failure: beer-inventory-allocate-failure
+    allocate-response: beer-inventory-allocate-response
   notification:
     email: beer-notification-send-email
     sms: beer-notification-send-sms
-  order:
+  beer:
     validate: beer-order-validate
-    allocate: beer-inventory-reserve-stock
-    allocate-failure: beer-inventory-release-stock
-    deallocate: beer-inventory-release-stock
+    validate-response: beer-validate-response
 
 http-client:
   max-total: 50

@@ -36,10 +36,9 @@ class OrderManagerTest {
     private final StateMachineFactory<BeerOrderStatus, BeerOrderEvent> stateMachineFactory = Mockito.mock(StateMachineFactory.class);
     private final OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
     private final OrderFactory orderFactory = Mockito.mock(OrderFactory.class);
-    private final OrderUpdated orderUpdated = Mockito.mock(OrderUpdated.class);
     private final StateMachineInterceptorAdapter<BeerOrderStatus, BeerOrderEvent> beerOrderStateChangeInterceptor = Mockito.mock(StateMachineInterceptorAdapter.class);
 
-    private final BeerOrderManager orderService = new BeerOrderManagerImpl(stateMachineFactory, orderRepository, orderFactory, orderUpdated, beerOrderStateChangeInterceptor);
+    private final BeerOrderManager orderService = new BeerOrderManagerImpl(stateMachineFactory, orderRepository, orderFactory, beerOrderStateChangeInterceptor);
 
     @Test
     void shouldCreateOrder() {
@@ -124,7 +123,7 @@ class OrderManagerTest {
         orderService.processValidationResult(order.getId(), true);
 
         // then
-        verify(orderRepository, times(13)).findById(orderId);
+        verify(orderRepository, times(2)).findById(orderId);
         verify(stateMachine, times(2)).sendEvent(captor.capture());
         final var allValues = captor.getAllValues();
         final var validationPassedMessage = (Message<BeerOrderEvent>) allValues.getFirst().block();

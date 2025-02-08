@@ -16,11 +16,11 @@ class BeerInventoryListener {
     private final BeerOrderManager beerOrderManager;
 
     @JmsListener(destination = "${queue.inventory.allocate-response}")
-    public void orderAllocation(@Payload BeerInventoryEventResponse result) {
+    public void inventoryAllocation(@Payload BeerInventoryEventResponse result) {
         if (result.success()) {
-            beerOrderManager.orderAllocationPassed(result.getOrderId(), result.getBeerId(), result.getStock());
+            beerOrderManager.orderAllocationPassed(result.getOrderId(), result.getBeers());
         } else {
-            beerOrderManager.orderAllocationFailed(result.getOrderId(), result.getBeerId());
+            beerOrderManager.orderAllocationFailed(result.getOrderId(), result.getBeers());
         }
     }
 }

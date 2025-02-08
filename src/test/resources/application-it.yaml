@@ -3,23 +3,28 @@ spring:
     name: brewery-order-service
   datasource:
     url: jdbc:h2:mem:brewery-order-service-test;MODE=MYSQL
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
-    show-sql: true
+    hibernate:
+      ddl-auto: create
+  liquibase:
+    enabled: false
 
 queue:
   inventory:
-    reserve-stock: beer-inventory-reserve-stock
-    release-stock: beer-inventory-release-stock
-    allocate-response: beer-order-allocate-response
+    allocate-stock: test-beer-inventory-allocate-stock
+    deallocate-stock: test-beer-inventory-deallocate-stock
+    allocate-failure: test-beer-inventory-allocate-failure
+    allocate-response: test-beer-inventory-allocate-response
   notification:
-    email: beer-notification-send-email
-    sms: beer-notification-send-sms
-  order:
-    validate: beer-order-validate
-    allocate: beer-inventory-reserve-stock
-    allocate-failure: beer-inventory-release-stock
-    deallocate: beer-inventory-release-stock
+    email: test-beer-notification-send-email
+    sms: test-beer-notification-send-sms
+  beer:
+    validate: test-beer-order-validate
+    validate-response: test-beer-validate-response
 
 http-client:
   max-total: 50
@@ -35,11 +40,9 @@ rest:
     service: "http://localhost:8888/api/v1/beers/"
   customer:
     service: "http://localhost:8888/api/v1/customers/"
-
-local:
-  server:
-    port: 8000
+server:
+  port: 8082
 
 logging:
   level:
-    org.hibernate.orm.jdbc.bind: trace
+    pl.excellentapp: DEBUG
