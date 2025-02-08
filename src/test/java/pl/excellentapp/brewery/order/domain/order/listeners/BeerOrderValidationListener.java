@@ -17,6 +17,7 @@ public class BeerOrderValidationListener {
 
     public static final UUID BEER_NO_VALIDATE_ID = UUID.fromString("a1d9c5ed-199c-459f-8b86-d9841034a46b");
     public static final UUID BEER_WITHOUT_VALIDATE_RESPONSE_ID = UUID.fromString("6497545c-1f23-41e5-8816-bbd6e97c8fc4");
+    public static final UUID BEER_CHANGE_QUANTITY = UUID.fromString("c139b2c3-5590-4b23-9712-7c6e19effdba");
 
     private final JmsTemplate jmsTemplate;
     private final String allocateOrderResponseQueueName;

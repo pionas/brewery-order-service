@@ -11,6 +11,8 @@ import pl.excellentapp.brewery.model.events.BeerInventoryEventResponse;
 import java.util.Objects;
 import java.util.UUID;
 
+import static pl.excellentapp.brewery.order.domain.order.listeners.BeerOrderValidationListener.BEER_CHANGE_QUANTITY;
+
 @Slf4j
 @Component
 public class BeerInventoryAllocateStockListener {
@@ -38,6 +40,9 @@ public class BeerInventoryAllocateStockListener {
             sendResponse = false;
         }
 
+        if (request.getBeers().containsKey(BEER_CHANGE_QUANTITY)) {
+            request.getBeers().put(BEER_CHANGE_QUANTITY, 1);
+        }
         final var responseEvent = BeerInventoryEventResponse.builder()
                 .orderId(request.getOrderId())
                 .beers(request.getBeers())

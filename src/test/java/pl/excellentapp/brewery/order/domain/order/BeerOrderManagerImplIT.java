@@ -54,7 +54,7 @@ class BeerOrderManagerImplIT extends AbstractIT {
     private String allocateFailureOrderQueueName;
 
     @AfterEach
-    void clearDatabase(@Autowired JdbcTemplate jdbcTemplate) {
+    void afterEach(@Autowired JdbcTemplate jdbcTemplate) {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "orders_items", "orders");
         wireMockServer.resetAll();
     }

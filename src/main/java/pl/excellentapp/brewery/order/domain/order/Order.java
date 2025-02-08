@@ -34,8 +34,6 @@ public class Order {
 
         if (allItemsReserved) {
             orderStatus = BeerOrderStatus.ALLOCATED;
-        } else {
-            orderStatus = BeerOrderStatus.NEW;
         }
     }
 

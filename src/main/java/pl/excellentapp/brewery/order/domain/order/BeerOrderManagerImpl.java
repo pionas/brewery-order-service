@@ -58,7 +58,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
 
     @Override
     public void orderAllocationPassed(UUID orderId, Map<UUID, Integer> beers) {
-        sleep(orderId, List.of(BeerOrderStatus.ALLOCATED));
+        sleep(orderId, List.of(BeerOrderStatus.ALLOCATION_PENDING));
         beerOrderRepository.findById(orderId)
                 .ifPresentOrElse(beerOrder -> {
                             beers.forEach(beerOrder::reserve);
@@ -73,7 +73,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
 
     @Override
     public void orderAllocationFailed(UUID orderId, Map<UUID, Integer> beers) {
-        sleep(orderId, List.of(BeerOrderStatus.ALLOCATED));
+        sleep(orderId, List.of(BeerOrderStatus.ALLOCATION_PENDING));
         beerOrderRepository.findById(orderId).ifPresentOrElse(
                 beerOrder -> sendOrderEvent(beerOrder, BeerOrderEvent.ALLOCATION_FAILED)
                         .subscribe(),

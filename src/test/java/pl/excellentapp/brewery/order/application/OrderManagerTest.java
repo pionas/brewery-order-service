@@ -96,7 +96,7 @@ class OrderManagerTest {
         orderService.processValidationResult(order.getId(), true);
 
         // then
-        verify(orderRepository).findById(orderId);
+        verify(orderRepository, times(12)).findById(orderId);
         verify(stateMachine, never()).sendEvent(any(Mono.class));
     }
 
@@ -123,7 +123,7 @@ class OrderManagerTest {
         orderService.processValidationResult(order.getId(), true);
 
         // then
-        verify(orderRepository, times(2)).findById(orderId);
+        verify(orderRepository, times(24)).findById(orderId);
         verify(stateMachine, times(2)).sendEvent(captor.capture());
         final var allValues = captor.getAllValues();
         final var validationPassedMessage = (Message<BeerOrderEvent>) allValues.getFirst().block();
@@ -158,7 +158,7 @@ class OrderManagerTest {
         orderService.processValidationResult(order.getId(), false);
 
         // then
-        verify(orderRepository).findById(orderId);
+        verify(orderRepository, times(12)).findById(orderId);
         final var captor = ArgumentCaptor.forClass(Mono.class);
         verify(stateMachine).sendEvent(captor.capture());
         Mono<Message<BeerOrderEvent>> capturedMono = captor.getValue();
