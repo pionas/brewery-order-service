@@ -22,7 +22,7 @@ class AllocationFailureAction extends AbstractAction {
     private final JmsTemplate jmsTemplate;
     private final String allocateFailureOrderQueueName;
 
-    public AllocationFailureAction(OrderRepository beerOrderRepository, JmsTemplate jmsTemplate, @Value("${queue.inventory.allocate-failure}") String allocateFailureOrderQueueName) {
+    public AllocationFailureAction(OrderRepository beerOrderRepository, JmsTemplate jmsTemplate, @Value("${queue.inventory.deallocate-stock}") String allocateFailureOrderQueueName) {
         this.beerOrderRepository = beerOrderRepository;
         this.jmsTemplate = jmsTemplate;
         this.allocateFailureOrderQueueName = allocateFailureOrderQueueName;

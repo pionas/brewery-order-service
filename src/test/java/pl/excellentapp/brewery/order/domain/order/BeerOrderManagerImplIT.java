@@ -27,6 +27,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static pl.excellentapp.brewery.order.domain.order.listeners.BeerInventoryAllocateStockListener.ORDER_INVALID_QUANTITY;
+import static pl.excellentapp.brewery.order.domain.order.listeners.BeerOrderValidationListener.BEER_CHANGE_QUANTITY;
 import static pl.excellentapp.brewery.order.domain.order.listeners.BeerOrderValidationListener.BEER_NO_VALIDATE_ID;
 
 class BeerOrderManagerImplIT extends AbstractIT {
@@ -49,7 +50,7 @@ class BeerOrderManagerImplIT extends AbstractIT {
     @Autowired
     WireMockServer wireMockServer;
 
-    @Value("${queue.inventory.allocate-failure}")
+    @Value("${queue.inventory.deallocate-stock}")
     private String allocateFailureOrderQueueName;
 
     @AfterEach
@@ -121,9 +122,12 @@ class BeerOrderManagerImplIT extends AbstractIT {
         final var customerId = UUID.randomUUID();
         final var beerCustomerResponse = getCustomer(customerId);
         final var beerDto = getBeerDto(UUID.randomUUID());
+        final var beerInventoryResponse = getBeerInventoryResponse(beerDto);
         final var order = createOrder(orderId, customerId, beerDto, 1);
         wireMockServer.stubFor(get(BEER_CUSTOMER_ID + customerId)
                 .willReturn(okJson(objectMapper.writeValueAsString(beerCustomerResponse))));
+        wireMockServer.stubFor(get(BEER_INVENTORY_ID + beerDto.getId())
+                .willReturn(okJson(objectMapper.writeValueAsString(beerInventoryResponse))));
 
         final var savedOrder = orderManager.newOrder(order.getCustomerId(), order.getItems());
         await().untilAsserted(() -> {
@@ -175,9 +179,9 @@ class BeerOrderManagerImplIT extends AbstractIT {
     void testPartialAllocation() throws JsonProcessingException {
         final var orderId = UUID.randomUUID();
         final var customerId = UUID.randomUUID();
-        final var beerDto = getBeerDto(UUID.randomUUID());
+        final var beerDto = getBeerDto(BEER_CHANGE_QUANTITY);
         final var beerCustomerResponse = getCustomer(customerId);
-        final var order = createOrder(orderId, customerId, beerDto, 1);
+        final var order = createOrder(orderId, customerId, beerDto, 30);
         final var beerInventoryResponse = getBeerInventoryResponse(beerDto);
         wireMockServer.stubFor(get(BEER_CUSTOMER_ID + customerId)
                 .willReturn(okJson(objectMapper.writeValueAsString(beerCustomerResponse))));
@@ -202,8 +206,11 @@ class BeerOrderManagerImplIT extends AbstractIT {
         final var beerCustomerResponse = getCustomer(customerId);
         final var beerDto = getBeerDto(UUID.randomUUID());
         final var order = createOrder(orderId, customerId, beerDto, 1);
+        final var beerInventoryResponse = getBeerInventoryResponse(beerDto);
         wireMockServer.stubFor(get(BEER_CUSTOMER_ID + customerId)
                 .willReturn(okJson(objectMapper.writeValueAsString(beerCustomerResponse))));
+        wireMockServer.stubFor(get(BEER_INVENTORY_ID + beerDto.getId())
+                .willReturn(okJson(objectMapper.writeValueAsString(beerInventoryResponse))));
 
         // when
         final var savedOrder = orderManager.newOrder(order.getCustomerId(), order.getItems());
@@ -248,7 +255,7 @@ class BeerOrderManagerImplIT extends AbstractIT {
         // then
         await().untilAsserted(() -> {
             final var foundOrder = orderRepository.findById(savedOrder.getId()).get();
-            assertEquals(BeerOrderStatus.CANCELLED_BY_USER, foundOrder.getOrderStatus());
+            assertEquals(BeerOrderStatus.CANCELLED_BY_SYSTEM, foundOrder.getOrderStatus());
         });
     }
 
@@ -259,9 +266,12 @@ class BeerOrderManagerImplIT extends AbstractIT {
         final var customerId = UUID.randomUUID();
         final var beerCustomerResponse = getCustomer(customerId);
         final var beerDto = getBeerDto(UUID.randomUUID());
+        final var beerInventoryResponse = getBeerInventoryResponse(beerDto);
         final var order = createOrder(orderId, customerId, beerDto, 1);
         wireMockServer.stubFor(get(BEER_CUSTOMER_ID + customerId)
                 .willReturn(okJson(objectMapper.writeValueAsString(beerCustomerResponse))));
+        wireMockServer.stubFor(get(BEER_INVENTORY_ID + beerDto.getId())
+                .willReturn(okJson(objectMapper.writeValueAsString(beerInventoryResponse))));
 
         final var savedOrder = orderManager.newOrder(customerId, order.getItems());
         await().untilAsserted(() -> {
