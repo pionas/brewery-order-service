@@ -20,12 +20,12 @@ class AllocationFailureAction extends AbstractAction {
 
     private final OrderRepository beerOrderRepository;
     private final JmsTemplate jmsTemplate;
-    private final String allocateFailureOrderQueueName;
+    private final String deallocateStockOrderQueueName;
 
-    public AllocationFailureAction(OrderRepository beerOrderRepository, JmsTemplate jmsTemplate, @Value("${queue.inventory.deallocate-stock}") String allocateFailureOrderQueueName) {
+    public AllocationFailureAction(OrderRepository beerOrderRepository, JmsTemplate jmsTemplate, @Value("${queue.inventory.deallocate-stock}") String deallocateStockOrderQueueName) {
         this.beerOrderRepository = beerOrderRepository;
         this.jmsTemplate = jmsTemplate;
-        this.allocateFailureOrderQueueName = allocateFailureOrderQueueName;
+        this.deallocateStockOrderQueueName = deallocateStockOrderQueueName;
     }
 
     @Override
@@ -40,6 +40,6 @@ class AllocationFailureAction extends AbstractAction {
     }
 
     private void changeBeersStock(Order beerOrder) {
-        jmsTemplate.convertAndSend(allocateFailureOrderQueueName, new BeerInventoryEvent(beerOrder));
+        jmsTemplate.convertAndSend(deallocateStockOrderQueueName, new BeerInventoryEvent(beerOrder));
     }
 }

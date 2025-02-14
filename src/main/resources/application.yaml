@@ -19,7 +19,6 @@ queue:
   inventory:
     allocate-stock: beer-inventory-allocate-stock
     deallocate-stock: beer-inventory-deallocate-stock
-    allocate-failure: beer-inventory-allocate-failure
     allocate-response: beer-inventory-allocate-response
   notification:
     email: beer-notification-send-email

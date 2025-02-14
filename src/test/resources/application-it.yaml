@@ -17,7 +17,6 @@ queue:
   inventory:
     allocate-stock: test-beer-inventory-allocate-stock
     deallocate-stock: test-beer-inventory-deallocate-stock
-    allocate-failure: test-beer-inventory-allocate-failure
     allocate-response: test-beer-inventory-allocate-response
   notification:
     email: test-beer-notification-send-email

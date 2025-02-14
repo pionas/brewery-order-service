@@ -51,7 +51,7 @@ class BeerOrderManagerImplIT extends AbstractIT {
     WireMockServer wireMockServer;
 
     @Value("${queue.inventory.deallocate-stock}")
-    private String allocateFailureOrderQueueName;
+    private String deallocateStockOrderQueueName;
 
     @AfterEach
     void afterEach(@Autowired JdbcTemplate jdbcTemplate) {
@@ -170,7 +170,7 @@ class BeerOrderManagerImplIT extends AbstractIT {
             assertEquals(BeerOrderStatus.ALLOCATION_EXCEPTION, foundOrder.getOrderStatus());
         });
 
-        final var allocationFailureEvent = (BeerInventoryEvent) jmsTemplate.receiveAndConvert(allocateFailureOrderQueueName);
+        final var allocationFailureEvent = (BeerInventoryEvent) jmsTemplate.receiveAndConvert(deallocateStockOrderQueueName);
         assertNotNull(allocationFailureEvent);
         assertThat(allocationFailureEvent.getOrderId()).isEqualTo(savedOrder.getId());
     }
@@ -226,7 +226,7 @@ class BeerOrderManagerImplIT extends AbstractIT {
             final var foundOrder = orderRepository.findById(savedOrder.getId()).get();
             assertEquals(BeerOrderStatus.CANCELLED_BY_SYSTEM, foundOrder.getOrderStatus());
         });
-        final var beerInventoryEvent = (BeerInventoryEvent) jmsTemplate.receiveAndConvert(allocateFailureOrderQueueName);
+        final var beerInventoryEvent = (BeerInventoryEvent) jmsTemplate.receiveAndConvert(deallocateStockOrderQueueName);
         assertNotNull(beerInventoryEvent);
         assertThat(beerInventoryEvent.getOrderId()).isEqualTo(savedOrder.getId());
     }
@@ -260,7 +260,7 @@ class BeerOrderManagerImplIT extends AbstractIT {
             final var foundOrder = orderRepository.findById(savedOrder.getId()).get();
             assertEquals(BeerOrderStatus.CANCELLED_BY_SYSTEM, foundOrder.getOrderStatus());
         });
-        final var beerInventoryEvent = (BeerInventoryEvent) jmsTemplate.receiveAndConvert(allocateFailureOrderQueueName);
+        final var beerInventoryEvent = (BeerInventoryEvent) jmsTemplate.receiveAndConvert(deallocateStockOrderQueueName);
         assertNotNull(beerInventoryEvent);
         assertThat(beerInventoryEvent.getOrderId()).isEqualTo(savedOrder.getId());
     }
@@ -293,7 +293,7 @@ class BeerOrderManagerImplIT extends AbstractIT {
             final var foundOrder = orderRepository.findById(savedOrder.getId()).get();
             assertEquals(BeerOrderStatus.CANCELLED_BY_SYSTEM, foundOrder.getOrderStatus());
         });
-        final var beerInventoryEvent = (BeerInventoryEvent) jmsTemplate.receiveAndConvert(allocateFailureOrderQueueName);
+        final var beerInventoryEvent = (BeerInventoryEvent) jmsTemplate.receiveAndConvert(deallocateStockOrderQueueName);
         assertNotNull(beerInventoryEvent);
         assertThat(beerInventoryEvent.getOrderId()).isEqualTo(savedOrder.getId());
     }
