@@ -8,7 +8,7 @@ import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
 
 @Configuration(proxyBeanMethods = false)
-class JmsConfig {
+class JmsConfiguration {
 
     @Bean
     public MessageConverter messageConverter(ObjectMapper objectMapper) {
