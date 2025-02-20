@@ -41,7 +41,3 @@ rest:
     service: "http://localhost:8888/api/v1/customers/"
 server:
   port: 8082
-
-logging:
-  level:
-    pl.excellentapp: DEBUG
