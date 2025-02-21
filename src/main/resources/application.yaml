@@ -1,52 +1,5 @@
 spring:
   application:
     name: brewery-order-service
-  datasource:
-    url: jdbc:h2:mem:brewery-order-service;MODE=MYSQL
-    username: sa
-    password: password
-    driverClassName: org.h2.Driver
-  h2:
-    console:
-      enabled: true
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-  artemis:
-    user: artemis-user
-    password: artemis-password
-
-queue:
-  inventory:
-    allocate-stock: beer-inventory-allocate-stock
-    deallocate-stock: beer-inventory-deallocate-stock
-    allocate-response: beer-inventory-allocate-response
-  notification:
-    email: beer-notification-send-email
-    sms: beer-notification-send-sms
-  beer:
-    validate: beer-order-validate
-    validate-response: beer-validate-response
-
-http-client:
-  max-total: 50
-  max-per-route: 20
-  socket-timeout: PT5S
-  idle-timeout: PT60S
-  keep-alive-time: PT5S
-
-rest:
-  inventory:
-    service: "http://localhost:8081/api/v1/inventories/"
-  beer:
-    service: "http://localhost:8080/api/v1/beers/"
-  customer:
-    service: "http://localhost:8083/api/v1/customers/"
-server:
-  port: 8082
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://netflix:eureka@localhost:8761/eureka
-    fetch-registry: true
-    register-with-eureka: true
+  config:
+    import: "configserver:"
