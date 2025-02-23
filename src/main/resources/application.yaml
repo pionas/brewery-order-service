@@ -3,3 +3,7 @@ spring:
     name: brewery-order-service
   config:
     import: "optional:configserver:"
+  cloud:
+    config:
+      username: config-server
+      password: mkM5HxI2UpD51E5
