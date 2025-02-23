@@ -2,4 +2,4 @@ spring:
   application:
     name: brewery-order-service
   config:
-    import: "configserver:"
+    import: "optional:configserver:"
