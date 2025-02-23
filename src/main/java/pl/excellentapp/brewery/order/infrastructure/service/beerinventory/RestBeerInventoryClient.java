@@ -13,11 +13,10 @@ class RestBeerInventoryClient implements BeerInventoryService {
 
     private static final String BEER_ID = "/{beerId}";
     private final RestTemplate restTemplate;
-    private final String url;
 
     @Override
     public BeerInventory getInventory(UUID beerId) {
-        return Objects.requireNonNull(restTemplate.getForObject(url + BEER_ID, BeerInventoryResponse.class, beerId))
+        return Objects.requireNonNull(restTemplate.getForObject(BEER_ID, BeerInventoryResponse.class, beerId))
                 .toBeerInventory();
     }
 }

@@ -32,7 +32,7 @@ http-client:
 
 rest:
   inventory:
-    service: "http://localhost:8888/api/v1/inventories/"
+    url: "http://localhost:8888/api/v1/inventories/"
   beer:
     service: "http://localhost:8888/api/v1/beers/"
   customer:
